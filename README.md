@@ -19,3 +19,5 @@ Enrich the editing experience in Logseq, automatically match all kinds of parent
 - Replacement of special text combinations.
 
 ## 使用展示 (Usage)
+
+https://user-images.githubusercontent.com/3410293/208099641-89d3f0ba-7146-4e8c-b4b4-cf859ca2f42c.mp4
