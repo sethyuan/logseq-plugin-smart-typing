@@ -1,9 +1,9 @@
 const PairOpenChars = "([{\"'（【「《“‘"
 const PairCloseChars = ")]}\"'）】」》”’"
 const CloseParenChars = ")]}）】」》"
-const WrapIdenChars = "$\"'¥（【「·“‘"
-const WrapOpenChars = "$\"'$（【「`“‘"
-const WrapCloseChars = "$\"'$）】」`“‘"
+const WrapIdenChars = "$\"'¥（【「·“‘”’"
+const WrapOpenChars = "$\"'$（【「`“‘“‘"
+const WrapCloseChars = "$\"'$）】」`”’”’"
 const SpecialKeys = [
   ["：：", ":: "],
   ["···", "```|```"],
@@ -24,6 +24,7 @@ async function handler(e) {
     e.target.nodeName !== "TEXTAREA" ||
     !e.target.parentElement.classList.contains("block-editor") ||
     e.isComposing ||
+    e.repeat ||
     e.metaKey ||
     e.ctrlKey ||
     e.altKey
