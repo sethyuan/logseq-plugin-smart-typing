@@ -1,9 +1,9 @@
 const PairOpenChars = "([{\"'（【「《“‘"
 const PairCloseChars = ")]}\"'）】」》”’"
 const CloseParenChars = ")]}）】」》"
-const WrapIdenChars = "$\"'¥（【「·“‘”’"
-const WrapOpenChars = "$\"'$（【「`“‘“‘"
-const WrapCloseChars = "$\"'$）】」`”’”’"
+const WrapIdenChars = "$\"'¥￥（【「《·“‘”’"
+const WrapOpenChars = "$\"'$$（【「《`“‘“‘"
+const WrapCloseChars = "$\"'$$）】」》`”’”’"
 const SpecialKeys = [
   ["：：", ":: "],
   ["···", "```|```"],
@@ -42,7 +42,8 @@ async function handler(e) {
 }
 
 async function handlePairs(textarea, blockUUID, e) {
-  const openIndex = PairOpenChars.indexOf(e.key)
+  const char = getChar(e)
+  const openIndex = PairOpenChars.indexOf(char)
   if (openIndex > -1) {
     const nextChar = textarea.value[textarea.selectionStart]
     e.preventDefault()
@@ -54,16 +55,16 @@ async function handlePairs(textarea, blockUUID, e) {
       await updateText(
         textarea,
         blockUUID,
-        `${e.key}${PairCloseChars[openIndex]}`,
+        `${char}${PairCloseChars[openIndex]}`,
         0,
         0,
         -1,
       )
     } else {
-      await updateText(textarea, blockUUID, e.key)
+      await updateText(textarea, blockUUID, char)
     }
     return true
-  } else if (e.key === "Backspace") {
+  } else if (char === "Backspace") {
     const prevChar = textarea.value[textarea.selectionStart - 1]
     const nextChar = textarea.value[textarea.selectionStart]
     const openIndex = PairOpenChars.indexOf(prevChar)
@@ -79,7 +80,7 @@ async function handlePairs(textarea, blockUUID, e) {
 async function handleSpecialKeys(textarea, blockUUID, e) {
   for (const [specialKey, mappingValue] of SpecialKeys) {
     if (
-      e.key === specialKey[specialKey.length - 1] &&
+      getChar(e) === specialKey[specialKey.length - 1] &&
       matchSpecialKey(textarea.value, textarea.selectionStart, specialKey)
     ) {
       e.preventDefault()
@@ -104,7 +105,7 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
 }
 
 async function handleSelection(textarea, blockUUID, e) {
-  let i = WrapIdenChars.indexOf(e.key)
+  let i = WrapIdenChars.indexOf(getChar(e))
   if (i > -1) {
     e.preventDefault()
     await updateText(
@@ -153,4 +154,59 @@ function matchSpecialKey(text, start, specialKey) {
     if (text[start + j] !== specialKey[i]) return false
   }
   return true
+}
+
+function getChar(e) {
+  if (e.key !== "Process") return e.key
+
+  if (e.shiftKey) {
+    switch (e.code) {
+      case "Digit1":
+        return "！"
+      case "Digit4":
+        return "￥"
+      case "Digit9":
+        return "（"
+      case "Digit0":
+        return "）"
+      case "Backquote":
+        return "～"
+      case "Backslash":
+        return "｜"
+      case "Semicolon":
+        return "："
+      case "Quote":
+        return "“"
+      case "Comma":
+        return "《"
+      case "Period":
+        return "》"
+      case "Slash":
+        return "？"
+      default:
+        return null
+    }
+  } else {
+    switch (e.code) {
+      case "BracketLeft":
+        return "【"
+      case "BracketRight":
+        return "】"
+      case "Backquote":
+        return "·"
+      case "Slash":
+      case "Backslash":
+        return "、"
+      case "Semicolon":
+        return "；"
+      case "Quote":
+        return "‘"
+      case "Comma":
+        return "，"
+      case "Period":
+        return "。"
+      default:
+        return null
+    }
+  }
 }
