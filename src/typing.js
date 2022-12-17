@@ -9,20 +9,21 @@ const SpecialKeys = [
   ["···", "```|```"],
 ]
 
-export function smartTypingInit() {
+export function init() {
   const appContainer = parent.document.getElementById("app-container")
-  appContainer.addEventListener("keydown", smartTypingHandler)
+  appContainer.addEventListener("keydown", handler)
 }
 
-export function smartTypingCleanUp() {
+export function cleanUp() {
   const appContainer = parent.document.getElementById("app-container")
-  appContainer.removeEventListener("keydown", smartTypingHandler)
+  appContainer.removeEventListener("keydown", handler)
 }
 
-async function smartTypingHandler(e) {
+async function handler(e) {
   if (
     e.target.nodeName !== "TEXTAREA" ||
     !e.target.parentElement.classList.contains("block-editor") ||
+    e.isComposing ||
     e.metaKey ||
     e.ctrlKey ||
     e.altKey

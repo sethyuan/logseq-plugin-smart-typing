@@ -1,10 +1,10 @@
 import "@logseq/libs"
-import { smartTypingCleanUp, smartTypingInit } from "./typing"
+import { cleanUp, init } from "./typing"
 
 async function main() {
-  smartTypingInit()
+  init()
 
-  logseq.beforeunload(smartTypingCleanUp)
+  logseq.beforeunload(cleanUp)
 
   console.log("#smart-typing loaded")
 }
