@@ -4,6 +4,13 @@
 
 Enrich the editing experience in Logseq, automatically match all kinds of parentheses, quotation marks and mathematical equations. Support for matching Chinese punctuation marks.
 
+## 使用展示 (Usage)
+
+https://user-images.githubusercontent.com/3410293/208099641-89d3f0ba-7146-4e8c-b4b4-cf859ca2f42c.mp4
+
+https://user-images.githubusercontent.com/3410293/208390027-f2167840-d315-4cbc-9884-67729de88c97.mp4
+
+
 ## 功能展示
 
 - 更全面的配对标点的自动补完与删除。
@@ -40,10 +47,3 @@ Enrich the editing experience in Logseq, automatically match all kinds of parent
 `random(from, to)` - Returns a random number between `from` and `to`, inclusive.
 
 `choose(...choices)` - Given a set of values, returns one randomly.
-
-
-## 使用展示 (Usage)
-
-https://user-images.githubusercontent.com/3410293/208099641-89d3f0ba-7146-4e8c-b4b4-cf859ca2f42c.mp4
-
-https://user-images.githubusercontent.com/3410293/208390027-f2167840-d315-4cbc-9884-67729de88c97.mp4
