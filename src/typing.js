@@ -6,17 +6,13 @@ const CloseParenChars = ")]}）】」》"
 const WrapIdenChars = "$\"'¥￥（【「《·“‘”’"
 const WrapOpenChars = "$\"'$$（【「《`“‘“‘"
 const WrapCloseChars = "$\"'$$）】」》`”’”’"
-const SpecialKeys = [
+const BuiltInSpecialKeys = [
   ["【【", { repl: "[[|]]", del: 1 }],
   ["（（", { repl: "((|))", del: 1 }],
   ["：：", { repl: ":: ", del: 0 }],
   ["···", { repl: "```|```", del: 0 }],
-  // [";yesterday ", { repl: "[[{{date(-1)}}]]", del: 0 }],
-  // [
-  //   ";meal ",
-  //   { repl: "{{choose('hot dog', 'hamburger', 'salad', 'rice')}}", del: 0 },
-  // ],
 ]
+let specialKeys = [...BuiltInSpecialKeys]
 
 const evaluate = eval
 
@@ -31,6 +27,13 @@ export function init() {
 export function cleanUp() {
   const appContainer = parent.document.getElementById("app-container")
   appContainer.removeEventListener("keydown", handler)
+}
+
+export function reloadUserRules() {
+  const userRules = getUserRules()
+  if (userRules.length > 0) {
+    specialKeys = [...BuiltInSpecialKeys, ...userRules]
+  }
 }
 
 async function handler(e) {
@@ -92,7 +95,7 @@ async function handlePairs(textarea, blockUUID, e) {
 }
 
 async function handleSpecialKeys(textarea, blockUUID, e) {
-  for (const [specialKey, mapping] of SpecialKeys) {
+  for (const [specialKey, mapping] of specialKeys) {
     const lastChar = specialKey[specialKey.length - 1]
     const char = getChar(e)
     const isBoundary = lastChar === " " && WordBoundaryR.test(char)
@@ -266,4 +269,30 @@ function findBarPos(str, calls) {
     }
   }
   return -1
+}
+
+function getUserRules() {
+  const settings = logseq.settings
+  const ret = []
+  for (const key of Object.keys(settings)) {
+    const match = key.match(/(.+)(\d)$/)
+    if (!match) {
+      ret[key] = settings[key]
+      continue
+    }
+    const [, k, n] = match
+    const i = +n - 1
+    if (ret[i] == null) {
+      ret[i] = new Array(2)
+    }
+    if (k === "trigger") {
+      ret[i][0] = settings[key]
+    } else if (k === "replacement") {
+      ret[i][1] = {
+        repl: settings[key],
+        del: 0,
+      }
+    }
+  }
+  return ret.filter((rule) => rule[0])
 }

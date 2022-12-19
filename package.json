@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "@logseq/libs": "^0.0.12",
-    "date-fns": "^2.29.3"
+    "date-fns": "^2.29.3",
+    "logseq-l10n": "^0.2.0"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^3.1.9",
