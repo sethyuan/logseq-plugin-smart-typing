@@ -5,8 +5,10 @@ const WrapIdenChars = "$\"'¥￥（【「《·“‘”’"
 const WrapOpenChars = "$\"'$$（【「《`“‘“‘"
 const WrapCloseChars = "$\"'$$）】」》`”’”’"
 const SpecialKeys = [
-  ["：：", ":: "],
-  ["···", "```|```"],
+  ["【【", { repl: "[[|]]", del: 1 }],
+  ["（（", { repl: "((|))", del: 1 }],
+  ["：：", { repl: ":: ", del: 0 }],
+  ["···", { repl: "```|```", del: 0 }],
 ]
 
 export function init() {
@@ -34,8 +36,8 @@ async function handler(e) {
   const textarea = e.target
   const blockUUID = textarea.closest("[blockid]").getAttribute("blockid")
   if (textarea.selectionStart === textarea.selectionEnd) {
-    ;(await handlePairs(textarea, blockUUID, e)) ||
-      (await handleSpecialKeys(textarea, blockUUID, e))
+    ;(await handleSpecialKeys(textarea, blockUUID, e)) ||
+      (await handlePairs(textarea, blockUUID, e))
   } else {
     await handleSelection(textarea, blockUUID, e)
   }
@@ -78,24 +80,22 @@ async function handlePairs(textarea, blockUUID, e) {
 }
 
 async function handleSpecialKeys(textarea, blockUUID, e) {
-  for (const [specialKey, mappingValue] of SpecialKeys) {
+  for (const [specialKey, { repl, del }] of SpecialKeys) {
     if (
       getChar(e) === specialKey[specialKey.length - 1] &&
       matchSpecialKey(textarea.value, textarea.selectionStart, specialKey)
     ) {
       e.preventDefault()
-      const barPos = mappingValue.lastIndexOf("|")
-      const cursor = barPos < 0 ? 0 : barPos - mappingValue.length + 1
+      const barPos = repl.lastIndexOf("|")
+      const cursor = barPos < 0 ? 0 : barPos - repl.length + 1
       await updateText(
         textarea,
         blockUUID,
         barPos < 0
-          ? mappingValue
-          : `${mappingValue.substring(0, barPos)}${mappingValue.substring(
-              barPos + 1,
-            )}`,
+          ? repl
+          : `${repl.substring(0, barPos)}${repl.substring(barPos + 1)}`,
         -specialKey.length + 1,
-        0,
+        del,
         cursor,
       )
       return true
