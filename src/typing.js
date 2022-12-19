@@ -1,5 +1,7 @@
-const PairOpenChars = "([{\"'（【「《“‘"
-const PairCloseChars = ")]}\"'）】」》”’"
+import "./fns"
+
+const PairOpenChars = '([{"（【「《“‘'
+const PairCloseChars = ')]}"）】」》”’'
 const CloseParenChars = ")]}）】」》"
 const WrapIdenChars = "$\"'¥￥（【「《·“‘”’"
 const WrapOpenChars = "$\"'$$（【「《`“‘“‘"
@@ -9,7 +11,17 @@ const SpecialKeys = [
   ["（（", { repl: "((|))", del: 1 }],
   ["：：", { repl: ":: ", del: 0 }],
   ["···", { repl: "```|```", del: 0 }],
+  // [";yesterday ", { repl: "[[{{date(-1)}}]]", del: 0 }],
+  // [
+  //   ";meal ",
+  //   { repl: "{{choose('hot dog', 'hamburger', 'salad', 'rice')}}", del: 0 },
+  // ],
 ]
+
+const evaluate = eval
+
+const WordBoundaryR =
+  /[^\u2E80-\u2FFF\u31C0-\u31EF\u3300-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\uFE30-\uFE4FA-Za-z_]/
 
 export function init() {
   const appContainer = parent.document.getElementById("app-container")
@@ -80,20 +92,51 @@ async function handlePairs(textarea, blockUUID, e) {
 }
 
 async function handleSpecialKeys(textarea, blockUUID, e) {
-  for (const [specialKey, { repl, del }] of SpecialKeys) {
+  for (const [specialKey, mapping] of SpecialKeys) {
+    const lastChar = specialKey[specialKey.length - 1]
+    const char = getChar(e)
+    const isBoundary = lastChar === " " && WordBoundaryR.test(char)
     if (
-      getChar(e) === specialKey[specialKey.length - 1] &&
+      (isBoundary || char === lastChar) &&
       matchSpecialKey(textarea.value, textarea.selectionStart, specialKey)
     ) {
       e.preventDefault()
-      const barPos = repl.lastIndexOf("|")
+      let { repl, del } = mapping
+
+      const calls = await Promise.all(
+        Array.from(repl.matchAll(/\{\{([^\{\}]+)\}\}/g)).map(async (m) => {
+          return {
+            start: m.index,
+            end: m.index + m[0].length,
+            repl: await evaluate(m[1]),
+          }
+        }),
+      )
+      let barPos = findBarPos(repl, calls)
+      if (calls.length > 0) {
+        let i = 0
+        const segments = []
+        for (const call of calls) {
+          segments.push(repl.substring(i, call.start))
+          segments.push(call.repl)
+          i = call.end
+          if (call.end < barPos) {
+            barPos += call.repl.length - (call.end - call.start)
+          }
+        }
+        segments.push(repl.substring(i))
+        repl = segments.join("")
+      }
+
       const cursor = barPos < 0 ? 0 : barPos - repl.length + 1
       await updateText(
         textarea,
         blockUUID,
         barPos < 0
-          ? repl
-          : `${repl.substring(0, barPos)}${repl.substring(barPos + 1)}`,
+          ? `${repl}${isBoundary ? char : ""}`
+          : `${repl.substring(0, barPos)}${repl.substring(barPos + 1)}${
+              isBoundary ? char : ""
+            }`,
         -specialKey.length + 1,
         del,
         cursor,
@@ -209,4 +252,18 @@ function getChar(e) {
         return null
     }
   }
+}
+
+function findBarPos(str, calls) {
+  chars: for (let i = str.length - 1; i >= 0; i--) {
+    if (str[i] === "|") {
+      for (const call of calls) {
+        if (i >= call.start && i <= call.end) {
+          continue chars
+        }
+      }
+      return i
+    }
+  }
+  return -1
 }
