@@ -6,12 +6,14 @@ const WrapIdenChars = "$\"'([¥￥（【「《·“‘”’"
 const WrapOpenChars = "$\"'([$$（【「《`“‘“‘"
 const WrapCloseChars = "$\"')]$$）】」》`”’”’"
 const BuiltInSpecialKeys = [
-  ["：：", ":: "],
+  ["：：", "::"],
   ["···", "```|```"],
 ]
 let specialKeys = [...BuiltInSpecialKeys]
 
 const evaluate = eval
+
+let selectionHandlerRunning = false
 
 const WordBoundaryR =
   /[^\u2E80-\u2FFF\u31C0-\u31EF\u3300-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\uFE30-\uFE4FA-Za-z_]/
@@ -96,7 +98,8 @@ async function inputHandler(e) {
     e.target.nodeName !== "TEXTAREA" ||
     !e.target.parentElement.classList.contains("block-editor") ||
     e.isComposing ||
-    e.target.selectionStart !== e.target.selectionEnd
+    e.target.selectionStart !== e.target.selectionEnd ||
+    selectionHandlerRunning
   )
     return
 
@@ -193,19 +196,20 @@ async function handlePairs(textarea, blockUUID, e) {
   return false
 }
 
-function selectionHandler(e) {
-  // console.log(e)
+async function selectionHandler(e) {
   if (
     e.target.nodeName !== "TEXTAREA" ||
     !e.target.parentElement.classList.contains("block-editor") ||
-    e.isComposing ||
-    e.target.selectionStart === e.target.selectionEnd
+    e.target.selectionStart === e.target.selectionEnd ||
+    selectionHandlerRunning
   )
     return
 
+  selectionHandlerRunning = true
   const textarea = e.target
   const blockUUID = textarea.closest("[blockid]").getAttribute("blockid")
-  handleSelection(textarea, blockUUID, e)
+  await handleSelection(textarea, blockUUID, e)
+  selectionHandlerRunning = false
 }
 
 async function handleSelection(textarea, blockUUID, e) {
