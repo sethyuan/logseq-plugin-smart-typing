@@ -68,35 +68,25 @@ async function keydownHandler(e) {
 
   const textarea = e.target
   const blockUUID = textarea.closest("[blockid]").getAttribute("blockid")
+
+  // Prevent Logseq's default '(', '（', '[' and '【' behavior.
+  if (
+    (e.shiftKey && e.code === "Digit9") ||
+    (!e.shiftKey && e.code === "BracketLeft")
+  ) {
+    e.stopPropagation()
+  }
+
   if (textarea.selectionStart === textarea.selectionEnd) {
-    switch (e.key) {
-      case "(":
-      case "[": {
-        // Prevent Logseq's default pair completion behavior.
-        e.stopPropagation()
-        break
+    if (e.key === "Backspace") {
+      // Pair deletion behavior.
+      const prevChar = textarea.value[textarea.selectionStart - 1]
+      const nextChar = textarea.value[textarea.selectionStart]
+      const openIndex = PairOpenChars.indexOf(prevChar)
+      if (openIndex > -1 && nextChar === PairCloseChars[openIndex]) {
+        e.preventDefault()
+        await updateText(textarea, blockUUID, "", -1, 1, 0)
       }
-      case "Backspace": {
-        // Pair deletion behavior.
-        const prevChar = textarea.value[textarea.selectionStart - 1]
-        const nextChar = textarea.value[textarea.selectionStart]
-        const openIndex = PairOpenChars.indexOf(prevChar)
-        if (openIndex > -1 && nextChar === PairCloseChars[openIndex]) {
-          e.preventDefault()
-          await updateText(textarea, blockUUID, "", -1, 1, 0)
-        }
-        break
-      }
-      default:
-        break
-    }
-  } else {
-    // Prevent Logseq's default '(', '（', '[' and '【' selection wrapping behavior.
-    if (
-      (e.shiftKey && e.code === "Digit9") ||
-      (!e.shiftKey && e.code === "BracketLeft")
-    ) {
-      e.stopPropagation()
     }
   }
 }
@@ -204,6 +194,7 @@ async function handlePairs(textarea, blockUUID, e) {
 }
 
 function selectionHandler(e) {
+  // console.log(e)
   if (
     e.target.nodeName !== "TEXTAREA" ||
     !e.target.parentElement.classList.contains("block-editor") ||
