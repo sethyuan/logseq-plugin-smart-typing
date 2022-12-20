@@ -1,16 +1,13 @@
 import "./fns"
 
-const PairOpenChars = '([{"（【「《“‘'
-const PairCloseChars = ')]}"）】」》”’'
-const CloseParenChars = ")]}）】」》"
-const WrapIdenChars = "$\"'¥￥（【「《·“‘”’"
-const WrapOpenChars = "$\"'$$（【「《`“‘“‘"
-const WrapCloseChars = "$\"'$$）】」》`”’”’"
+const PairOpenChars = '([{"（【「『《〈“‘'
+const PairCloseChars = ')]}"）】」』》〉”’'
+const WrapIdenChars = "$\"'([¥￥（【「《·“‘”’"
+const WrapOpenChars = "$\"'([$$（【「《`“‘“‘"
+const WrapCloseChars = "$\"')]$$）】」》`”’”’"
 const BuiltInSpecialKeys = [
-  ["【【", { repl: "[[|]]", del: 1 }],
-  ["（（", { repl: "((|))", del: 1 }],
-  ["：：", { repl: ":: ", del: 0 }],
-  ["···", { repl: "```|```", del: 0 }],
+  ["：：", ":: "],
+  ["···", "```|```"],
 ]
 let specialKeys = [...BuiltInSpecialKeys]
 
@@ -21,12 +18,18 @@ const WordBoundaryR =
 
 export function init() {
   const appContainer = parent.document.getElementById("app-container")
-  appContainer.addEventListener("keydown", handler)
+  appContainer.addEventListener("keydown", keydownHandler)
+  appContainer.addEventListener("beforeinput", selectionHandler)
+  appContainer.addEventListener("input", inputHandler)
+  appContainer.addEventListener("compositionend", inputHandler)
 }
 
 export function cleanUp() {
   const appContainer = parent.document.getElementById("app-container")
-  appContainer.removeEventListener("keydown", handler)
+  appContainer.removeEventListener("compositionend", inputHandler)
+  appContainer.removeEventListener("input", inputHandler)
+  appContainer.removeEventListener("beforeinput", selectionHandler)
+  appContainer.removeEventListener("keydown", keydownHandler)
 }
 
 export function reloadUserRules() {
@@ -51,7 +54,7 @@ export async function reloadUserFns() {
   }
 }
 
-async function handler(e) {
+async function keydownHandler(e) {
   if (
     e.target.nodeName !== "TEXTAREA" ||
     !e.target.parentElement.classList.contains("block-editor") ||
@@ -66,61 +69,64 @@ async function handler(e) {
   const textarea = e.target
   const blockUUID = textarea.closest("[blockid]").getAttribute("blockid")
   if (textarea.selectionStart === textarea.selectionEnd) {
-    ;(await handleSpecialKeys(textarea, blockUUID, e)) ||
-      (await handlePairs(textarea, blockUUID, e))
+    switch (e.key) {
+      case "(":
+      case "[": {
+        // Prevent Logseq's default pair completion behavior.
+        e.stopPropagation()
+        break
+      }
+      case "Backspace": {
+        // Pair deletion behavior.
+        const prevChar = textarea.value[textarea.selectionStart - 1]
+        const nextChar = textarea.value[textarea.selectionStart]
+        const openIndex = PairOpenChars.indexOf(prevChar)
+        if (openIndex > -1 && nextChar === PairCloseChars[openIndex]) {
+          e.preventDefault()
+          await updateText(textarea, blockUUID, "", -1, 1, 0)
+        }
+        break
+      }
+      default:
+        break
+    }
   } else {
-    await handleSelection(textarea, blockUUID, e)
+    // Prevent Logseq's default '(', '（', '[' and '【' selection wrapping behavior.
+    if (
+      (e.shiftKey && e.code === "Digit9") ||
+      (!e.shiftKey && e.code === "BracketLeft")
+    ) {
+      e.stopPropagation()
+    }
   }
 }
 
-async function handlePairs(textarea, blockUUID, e) {
-  const char = getChar(e)
-  const openIndex = PairOpenChars.indexOf(char)
-  if (openIndex > -1) {
-    const nextChar = textarea.value[textarea.selectionStart]
-    e.preventDefault()
-    if (
-      nextChar == null ||
-      CloseParenChars.includes(nextChar) ||
-      /^\s$/.test(nextChar)
-    ) {
-      await updateText(
-        textarea,
-        blockUUID,
-        `${char}${PairCloseChars[openIndex]}`,
-        0,
-        0,
-        -1,
-      )
-    } else {
-      await updateText(textarea, blockUUID, char)
-    }
-    return true
-  } else if (char === "Backspace") {
-    const prevChar = textarea.value[textarea.selectionStart - 1]
-    const nextChar = textarea.value[textarea.selectionStart]
-    const openIndex = PairOpenChars.indexOf(prevChar)
-    if (openIndex > -1 && nextChar === PairCloseChars[openIndex]) {
-      e.preventDefault()
-      await updateText(textarea, blockUUID, "", -1, 1, 0)
-      return true
-    }
-  }
-  return false
+async function inputHandler(e) {
+  if (
+    e.target.nodeName !== "TEXTAREA" ||
+    !e.target.parentElement.classList.contains("block-editor") ||
+    e.isComposing ||
+    e.target.selectionStart !== e.target.selectionEnd
+  )
+    return
+
+  const textarea = e.target
+  const blockUUID = textarea.closest("[blockid]").getAttribute("blockid")
+
+  ;(await handleSpecialKeys(textarea, blockUUID, e)) ||
+    (await handlePairs(textarea, blockUUID, e))
 }
 
 async function handleSpecialKeys(textarea, blockUUID, e) {
-  for (const [specialKey, mapping] of specialKeys) {
+  const char = e.data[e.data.length - 1]
+  const isBoundaryChar = WordBoundaryR.test(char)
+  for (let [specialKey, repl] of specialKeys) {
     const lastChar = specialKey[specialKey.length - 1]
-    const char = getChar(e)
-    const isBoundary = lastChar === " " && WordBoundaryR.test(char)
+    const isBoundary = lastChar === " " && isBoundaryChar
     if (
       (isBoundary || char === lastChar) &&
       matchSpecialKey(textarea.value, textarea.selectionStart, specialKey)
     ) {
-      e.preventDefault()
-      let { repl, del } = mapping
-
       const calls = await Promise.all(
         Array.from(repl.matchAll(/\{\{([^\{\}]+)\}\}/g)).map(async (m) => {
           return {
@@ -155,31 +161,87 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
           : `${repl.substring(0, barPos)}${repl.substring(barPos + 1)}${
               isBoundary ? char : ""
             }`,
-        -specialKey.length + 1,
-        del,
+        -specialKey.length,
+        0,
         cursor,
       )
+
       return true
     }
   }
   return false
 }
 
-async function handleSelection(textarea, blockUUID, e) {
-  let i = WrapIdenChars.indexOf(getChar(e))
+async function handlePairs(textarea, blockUUID, e) {
+  const char = e.data[0]
+  const i = PairOpenChars.indexOf(char)
   if (i > -1) {
-    e.preventDefault()
-    await updateText(
-      textarea,
-      blockUUID,
-      `${WrapOpenChars[i]}${textarea.value.substring(
-        textarea.selectionStart,
-        textarea.selectionEnd,
-      )}${WrapCloseChars[i]}`,
-    )
-    return true
+    const prevChar = textarea.value[textarea.selectionStart - 2]
+    const nextChar = textarea.value[textarea.selectionStart]
+    if (prevChar === char && nextChar === PairCloseChars[i]) {
+      if (char === "（" || char === "(") {
+        await updateText(textarea, blockUUID, `((`, -2, 1, 0)
+        return true
+      } else if (char === "【" || char === "[") {
+        await updateText(textarea, blockUUID, `[[`, -2, 1, 0)
+        return true
+      }
+    }
+    if (char === "〈" && prevChar === "《" && nextChar === "》") {
+      await updateText(textarea, blockUUID, `<`, -2, 1, 0)
+      return true
+    }
+    if (
+      nextChar == null ||
+      PairCloseChars.includes(nextChar) ||
+      /^\s$/.test(nextChar)
+    ) {
+      await updateText(textarea, blockUUID, PairCloseChars[i], 0, 0, -1)
+      return true
+    }
   }
   return false
+}
+
+function selectionHandler(e) {
+  if (
+    e.target.nodeName !== "TEXTAREA" ||
+    !e.target.parentElement.classList.contains("block-editor") ||
+    e.isComposing ||
+    e.target.selectionStart === e.target.selectionEnd
+  )
+    return
+
+  const textarea = e.target
+  const blockUUID = textarea.closest("[blockid]").getAttribute("blockid")
+  handleSelection(textarea, blockUUID, e)
+}
+
+async function handleSelection(textarea, blockUUID, e) {
+  const char = e.data[0]
+  let i = WrapIdenChars.indexOf(char)
+  if (i > -1) {
+    e.preventDefault()
+    const prevChar = textarea.value[textarea.selectionStart - 1]
+    const nextChar = textarea.value[textarea.selectionEnd]
+    const text = textarea.value.substring(
+      textarea.selectionStart,
+      textarea.selectionEnd,
+    )
+    if (prevChar === char && nextChar === WrapCloseChars[i]) {
+      if (char === "（" || char === "(") {
+        await updateText(textarea, blockUUID, `((${text}))`, -1, 1, 0, 2)
+      } else if (char === "【" || char === "[") {
+        await updateText(textarea, blockUUID, `[[${text}]]`, -1, 1, 0, 2)
+      }
+    } else {
+      await updateText(
+        textarea,
+        blockUUID,
+        `${WrapOpenChars[i]}${text}${WrapCloseChars[i]}`,
+      )
+    }
+  }
 }
 
 async function updateText(
@@ -189,6 +251,7 @@ async function updateText(
   delStartOffset = 0,
   delEndOffset = 0,
   cursorOffset = 0,
+  numWrapChars = 1,
 ) {
   const collapsed = textarea.selectionStart === textarea.selectionEnd
   const startPos = textarea.selectionStart + delStartOffset
@@ -205,71 +268,16 @@ async function updateText(
   )
   textarea.focus()
   textarea.setSelectionRange(
-    collapsed ? newPos : startPos + 1,
-    collapsed ? newPos : newPos - 1,
+    collapsed ? newPos : startPos + numWrapChars,
+    collapsed ? newPos : newPos - numWrapChars,
   )
 }
 
 function matchSpecialKey(text, start, specialKey) {
-  for (let i = specialKey.length - 2, j = -1; i >= 0; i--, j--) {
+  for (let i = specialKey.length - 2, j = -2; i >= 0; i--, j--) {
     if (text[start + j] !== specialKey[i]) return false
   }
   return true
-}
-
-function getChar(e) {
-  if (e.key !== "Process") return e.key
-
-  if (e.shiftKey) {
-    switch (e.code) {
-      case "Digit1":
-        return "！"
-      case "Digit4":
-        return "￥"
-      case "Digit9":
-        return "（"
-      case "Digit0":
-        return "）"
-      case "Backquote":
-        return "～"
-      case "Backslash":
-        return "｜"
-      case "Semicolon":
-        return "："
-      case "Quote":
-        return "“"
-      case "Comma":
-        return "《"
-      case "Period":
-        return "》"
-      case "Slash":
-        return "？"
-      default:
-        return null
-    }
-  } else {
-    switch (e.code) {
-      case "BracketLeft":
-        return "【"
-      case "BracketRight":
-        return "】"
-      case "Backquote":
-        return "·"
-      case "Slash":
-      case "Backslash":
-        return "、"
-      case "Semicolon":
-        return "；"
-      case "Quote":
-        return "‘"
-      case "Comma":
-        return "，"
-      case "Period":
-        return "。"
-      default:
-        return null
-    }
-  }
 }
 
 function findBarPos(str, calls) {
@@ -303,10 +311,7 @@ function getUserRules() {
     if (k === "trigger") {
       ret[i][0] = settings[key]
     } else if (k === "replacement") {
-      ret[i][1] = {
-        repl: settings[key],
-        del: 0,
-      }
+      ret[i][1] = settings[key]
     }
   }
   return ret.filter((rule) => rule[0])
