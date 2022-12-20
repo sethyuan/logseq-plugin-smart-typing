@@ -19,7 +19,7 @@ https://user-images.githubusercontent.com/3410293/208603319-b25898ea-d261-4ac0-a
 - 一键用配对标点包裹选中的文字。
 - 特殊文字组合的替换。
 - 用户可自定义特殊文字组合的替换，支持 JS 表达式与光标定位并囊括了一些内置函数。
-- 用户可自定义函数。创建一个代码块，给它一个 `#.fn` 的标签，代码块中的函数会被插件在启动时读取。后面如果函数有修改的话可以在命令栏里（mod+shift+p）执行“重新加载用户函数”。
+- 用户可自定义函数。创建一个代码块，给它一个 `#.fn` 的标签，代码块中的函数会被插件在启动时读取。后面如果函数有修改的话可以在命令栏里（`mod+shift+p`）执行“重新加载用户函数”。
 
 ### 内置函数
 
@@ -31,9 +31,15 @@ https://user-images.githubusercontent.com/3410293/208603319-b25898ea-d261-4ac0-a
 
 `choose(...choices)` - 给定一组值，随机返回其中一个。
 
+`clipboard()` - 读取剪切板文字。
+
 ### 自定义函数示例
 
 ![image](https://user-images.githubusercontent.com/3410293/208601883-7c4e421e-43d4-43b1-8438-4cfdf59d030a.png)
+
+## ⚠️ 注意
+
+请确认您使用的 JS 表达式和用户自定义函数的来源，确保您信任它们。外来的不安全代码可能有隐私泄漏等风险！
 
 ## Feature Highlights
 
@@ -42,7 +48,7 @@ https://user-images.githubusercontent.com/3410293/208603319-b25898ea-d261-4ac0-a
 - One-click wrapping of selected text with punctuation pairs.
 - Replacement of special text combinations.
 - User defined replacement rules. Supports JS expressions, placing cursor and providing some built-in functions.
-- User can define custom functions. Create a code block and give it a `#.fn` tag. The code within the code block will be read by the plugin on startup. You can also run "Reload user functions" from within the command palette later to reload if you modified the code.
+- User can define custom functions. Create a code block and give it a `#.fn` tag. The code within the code block will be read by the plugin on startup. You can also run "Reload user functions" from within the command palette (`mod+shift+p`) later to reload if you modified the code.
 
 ### Built-In Functions
 
@@ -54,6 +60,12 @@ https://user-images.githubusercontent.com/3410293/208603319-b25898ea-d261-4ac0-a
 
 `choose(...choices)` - Given a set of values, returns one randomly.
 
+`clipboard()` - Read clipboard's text.
+
 ### User defined functions example
 
 ![image](https://user-images.githubusercontent.com/3410293/208601883-7c4e421e-43d4-43b1-8438-4cfdf59d030a.png)
+
+## ⚠️ Caution
+
+Please check the source of the JS expressions and user-defined functions you use to make sure you trust them. Insecure code from outside sources may have risks such as privacy leaks!
