@@ -1,11 +1,12 @@
 import "@logseq/libs"
 import { setup, t } from "logseq-l10n"
 import zhCN from "./translations/zh-CN.json"
-import { cleanUp, init, reloadUserRules } from "./typing"
+import { cleanUp, init, reloadUserFns, reloadUserRules } from "./typing"
 
 async function main() {
   await setup({ builtinTranslations: { "zh-CN": zhCN } })
 
+  await reloadUserFns()
   init()
 
   logseq.useSettingsSchema([
@@ -172,6 +173,17 @@ async function main() {
   ])
 
   const settingsOff = logseq.onSettingsChanged(reloadUserRules)
+
+  logseq.App.registerCommandPalette(
+    {
+      key: "reload-user-fns",
+      label: t("Reload user functions"),
+    },
+    async () => {
+      await reloadUserFns()
+      await logseq.UI.showMsg(t("User defined functions reloaded."))
+    },
+  )
 
   logseq.beforeunload(() => {
     settingsOff()

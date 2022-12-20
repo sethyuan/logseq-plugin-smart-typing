@@ -10,7 +10,6 @@ https://user-images.githubusercontent.com/3410293/208099641-89d3f0ba-7146-4e8c-b
 
 https://user-images.githubusercontent.com/3410293/208390027-f2167840-d315-4cbc-9884-67729de88c97.mp4
 
-
 ## 功能展示
 
 - 更全面的配对标点的自动补完与删除。
@@ -18,6 +17,7 @@ https://user-images.githubusercontent.com/3410293/208390027-f2167840-d315-4cbc-9
 - 一键用配对标点包裹选中的文字。
 - 特殊文字组合的替换。
 - 用户可自定义特殊文字组合的替换，支持 JS 表达式与光标定位并囊括了一些内置函数。
+- 用户可自定义函数。创建一个代码块，给它一个 `#.fn` 的标签，代码块中的函数会被插件在启动时读取。后面如果函数有修改的话可以在命令栏里（mod+shift+p）执行“重新加载用户函数”。
 
 ### 内置函数
 
@@ -29,6 +29,7 @@ https://user-images.githubusercontent.com/3410293/208390027-f2167840-d315-4cbc-9
 
 `choose(...choices)` - 给定一组值，随机返回其中一个。
 
+### 自定义函数示例
 
 ## Feature Highlights
 
@@ -37,6 +38,7 @@ https://user-images.githubusercontent.com/3410293/208390027-f2167840-d315-4cbc-9
 - One-click wrapping of selected text with punctuation pairs.
 - Replacement of special text combinations.
 - User defined replacement rules. Supports JS expressions, placing cursor and providing some built-in functions.
+- User can define custom functions. Create a code block and give it a `#.fn` tag. The code within the code block will be read by the plugin on startup. You can also run "Reload user functions" from within the command palette later to reload if you modified the code.
 
 ### Built-In Functions
 
@@ -47,3 +49,5 @@ https://user-images.githubusercontent.com/3410293/208390027-f2167840-d315-4cbc-9
 `random(from, to)` - Returns a random number between `from` and `to`, inclusive.
 
 `choose(...choices)` - Given a set of values, returns one randomly.
+
+### User defined functions example

@@ -25,3 +25,7 @@ window.choose = (...choices) => {
   const index = random(0, choices.length - 1)
   return choices[index]
 }
+
+window.clipboard = async () => {
+  return (await parent.navigator.clipboard.readText()) ?? ""
+}
