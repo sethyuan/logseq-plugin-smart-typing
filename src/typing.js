@@ -121,7 +121,7 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
       matchSpecialKey(textarea.value, textarea.selectionStart, specialKey)
     ) {
       const calls = await Promise.all(
-        Array.from(repl.matchAll(/\{\{([^\{\}]+)\}\}/g)).map(async (m) => {
+        Array.from(repl.matchAll(/\{\{((?:[^\{\}]|\{(?!\{)|\}(?!\}))+)\}\}/g))).map(async (m) => {
           return {
             start: m.index,
             end: m.index + m[0].length,
