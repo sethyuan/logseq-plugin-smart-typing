@@ -216,7 +216,6 @@ async function handleSelection(textarea, blockUUID, e) {
   const char = e.data[0]
   let i = WrapIdenChars.indexOf(char)
   if (i > -1) {
-    e.preventDefault()
     const prevChar = textarea.value[textarea.selectionStart - 1]
     const nextChar = textarea.value[textarea.selectionEnd]
     const text = textarea.value.substring(
@@ -239,7 +238,7 @@ async function handleSelection(textarea, blockUUID, e) {
   }
 }
 
-async function updateText(
+function updateText(
   textarea,
   blockUUID,
   text,
@@ -253,19 +252,31 @@ async function updateText(
   const endPos = textarea.selectionEnd + delEndOffset
   const newPos = startPos + text.length + cursorOffset
   const content = textarea.value
-  await logseq.Editor.updateBlock(
-    blockUUID,
-    startPos < content.length
-      ? `${content.substring(0, startPos)}${text}${content.substring(endPos)}`
-      : startPos === content.length
-      ? `${content}${text}`
-      : `${content} ${text}`,
-  )
-  textarea.focus()
-  textarea.setSelectionRange(
-    collapsed ? newPos : startPos + numWrapChars,
-    collapsed ? newPos : newPos - numWrapChars,
-  )
+  return new Promise((resolve, reject) => {
+    // HACK: postpone block update to guarantee other input events go first.
+    setTimeout(async () => {
+      try {
+        await logseq.Editor.updateBlock(
+          blockUUID,
+          startPos < content.length
+            ? `${content.substring(0, startPos)}${text}${content.substring(
+                endPos,
+              )}`
+            : startPos === content.length
+            ? `${content}${text}`
+            : `${content} ${text}`,
+        )
+      } catch (err) {
+        reject(err)
+      }
+      textarea.focus()
+      textarea.setSelectionRange(
+        collapsed ? newPos : startPos + numWrapChars,
+        collapsed ? newPos : newPos - numWrapChars,
+      )
+      resolve()
+    }, 0)
+  })
 }
 
 function matchSpecialKey(text, start, specialKey) {
