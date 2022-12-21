@@ -6,11 +6,7 @@ Enrich the editing experience in Logseq, automatically match all kinds of parent
 
 ## 使用展示 (Usage)
 
-https://user-images.githubusercontent.com/3410293/208099641-89d3f0ba-7146-4e8c-b4b4-cf859ca2f42c.mp4
-
-https://user-images.githubusercontent.com/3410293/208390027-f2167840-d315-4cbc-9884-67729de88c97.mp4
-
-https://user-images.githubusercontent.com/3410293/208603319-b25898ea-d261-4ac0-a56f-3f28572585b3.mp4
+https://user-images.githubusercontent.com/3410293/208813936-e61ddd8a-a809-42b1-add3-aa5159b46ac8.mp4
 
 ## 功能展示
 
