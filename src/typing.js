@@ -110,6 +110,24 @@ async function inputHandler(e) {
     (await handlePairs(textarea, blockUUID, e))
 }
 
+// HACK: The throttle used here is for avoiding Windows IME
+// double triggering issue.
+const selectionHandler = throttle(async (e) => {
+  if (
+    e.target.nodeName !== "TEXTAREA" ||
+    !e.target.parentElement.classList.contains("block-editor") ||
+    e.target.selectionStart === e.target.selectionEnd ||
+    selectionHandlerRunning
+  )
+    return
+
+  selectionHandlerRunning = true
+  const textarea = e.target
+  const blockUUID = textarea.closest("[blockid]").getAttribute("blockid")
+  await handleSelection(textarea, blockUUID, e)
+  selectionHandlerRunning = false
+}, 10)
+
 async function handleSpecialKeys(textarea, blockUUID, e) {
   const char = e.data[e.data.length - 1]
   const isBoundaryChar = WordBoundaryR.test(char)
@@ -121,7 +139,9 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
       matchSpecialKey(textarea.value, textarea.selectionStart, specialKey)
     ) {
       const calls = await Promise.all(
-        Array.from(repl.matchAll(/\{\{((?:[^\{\}]|\{(?!\{)|\}(?!\}))+)\}\}/g))).map(async (m) => {
+        Array.from(
+          repl.matchAll(/\{\{((?:[^\{\}]|\{(?!\{)|\}(?!\}))+)\}\}/g),
+        ).map(async (m) => {
           return {
             start: m.index,
             end: m.index + m[0].length,
@@ -197,22 +217,6 @@ async function handlePairs(textarea, blockUUID, e) {
     }
   }
   return false
-}
-
-async function selectionHandler(e) {
-  if (
-    e.target.nodeName !== "TEXTAREA" ||
-    !e.target.parentElement.classList.contains("block-editor") ||
-    e.target.selectionStart === e.target.selectionEnd ||
-    selectionHandlerRunning
-  )
-    return
-
-  selectionHandlerRunning = true
-  const textarea = e.target
-  const blockUUID = textarea.closest("[blockid]").getAttribute("blockid")
-  await handleSelection(textarea, blockUUID, e)
-  selectionHandlerRunning = false
 }
 
 async function handleSelection(textarea, blockUUID, e) {
@@ -324,4 +328,14 @@ function getUserRules() {
     }
   }
   return ret.filter((rule) => rule[0])
+}
+
+function throttle(fn, ms) {
+  let ts = 0
+  return async (...args) => {
+    const now = Date.now()
+    if (now - ts <= ms) return
+    ts = now
+    await fn(...args)
+  }
 }
