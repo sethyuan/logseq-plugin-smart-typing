@@ -168,9 +168,12 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
 async function handlePairs(textarea, blockUUID, e) {
   const char = e.data[0]
   const i = PairOpenChars.indexOf(char)
-  if (i > -1) {
+  const nextChar = textarea.value[textarea.selectionStart]
+  if (char === nextChar && PairCloseChars.includes(char)) {
+    await updateText(textarea, blockUUID, "", 0, 1)
+    return true
+  } else if (i > -1) {
     const prevChar = textarea.value[textarea.selectionStart - 2]
-    const nextChar = textarea.value[textarea.selectionStart]
     if (prevChar === char && nextChar === PairCloseChars[i]) {
       if (char === "（" || char === "(") {
         await updateText(textarea, blockUUID, `((`, -2, 1, 0)
