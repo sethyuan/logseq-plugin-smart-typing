@@ -165,7 +165,8 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
         repl = segments.join("")
       }
 
-      const cursor = barPos < 0 ? 0 : barPos - repl.length + 1
+      const cursor =
+        barPos < 0 ? 0 : barPos - repl.length + 1 - (isBoundary ? 1 : 0)
       await updateText(
         textarea,
         blockUUID,
