@@ -13,15 +13,15 @@ let specialKeys = [...BuiltInSpecialKeys]
 
 const evaluate = eval
 
-let selectionHandlerRunning = false
-
 const WordBoundaryR =
   /[^\u2E80-\u2FFF\u31C0-\u31EF\u3300-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\uFE30-\uFE4FA-Za-z_]/
+
+let textareaBeforeInput
 
 export function init() {
   const appContainer = parent.document.getElementById("app-container")
   appContainer.addEventListener("keydown", keydownHandler)
-  appContainer.addEventListener("beforeinput", selectionHandler)
+  appContainer.addEventListener("beforeinput", beforeInputHandler)
   appContainer.addEventListener("input", inputHandler)
   appContainer.addEventListener("compositionend", inputHandler)
 }
@@ -30,7 +30,7 @@ export function cleanUp() {
   const appContainer = parent.document.getElementById("app-container")
   appContainer.removeEventListener("compositionend", inputHandler)
   appContainer.removeEventListener("input", inputHandler)
-  appContainer.removeEventListener("beforeinput", selectionHandler)
+  appContainer.removeEventListener("beforeinput", beforeInputHandler)
   appContainer.removeEventListener("keydown", keydownHandler)
 }
 
@@ -93,40 +93,41 @@ async function keydownHandler(e) {
   }
 }
 
+function beforeInputHandler(e) {
+  textareaBeforeInput = {
+    value: e.target.value,
+    selectionStart: e.target.selectionStart,
+    selectionEnd: e.target.selectionEnd,
+    focus: e.target.focus.bind(e.target),
+    setSelectionRange: e.target.setSelectionRange.bind(e.target),
+  }
+}
+
 async function inputHandler(e) {
   if (
     e.target.nodeName !== "TEXTAREA" ||
     !e.target.parentElement.classList.contains("block-editor") ||
-    e.isComposing ||
-    e.target.selectionStart !== e.target.selectionEnd ||
-    selectionHandlerRunning
+    e.isComposing
   )
     return
 
   const textarea = e.target
-  const blockUUID = textarea.closest("[blockid]").getAttribute("blockid")
+  const blockUUID = e.target.closest("[blockid]").getAttribute("blockid")
+  console.log(
+    textareaBeforeInput,
+    e.data,
+    e.target.selectionStart,
+    e.target.selectionEnd,
+    e.target.value,
+  )
 
-  ;(await handleSpecialKeys(textarea, blockUUID, e)) ||
-    (await handlePairs(textarea, blockUUID, e))
+  // if (textareaBeforeInput.selectionStart !== textareaBeforeInput.selectionEnd) {
+  //   await handleSelection(textareaBeforeInput, blockUUID, e)
+  // } else {
+  //   ;(await handleSpecialKeys(textarea, blockUUID, e)) ||
+  //     (await handlePairs(textarea, blockUUID, e))
+  // }
 }
-
-// HACK: The throttle used here is for avoiding Windows IME
-// double triggering issue.
-const selectionHandler = throttle(async (e) => {
-  if (
-    e.target.nodeName !== "TEXTAREA" ||
-    !e.target.parentElement.classList.contains("block-editor") ||
-    e.target.selectionStart === e.target.selectionEnd ||
-    selectionHandlerRunning
-  )
-    return
-
-  selectionHandlerRunning = true
-  const textarea = e.target
-  const blockUUID = textarea.closest("[blockid]").getAttribute("blockid")
-  await handleSelection(textarea, blockUUID, e)
-  selectionHandlerRunning = false
-}, 10)
 
 async function handleSpecialKeys(textarea, blockUUID, e) {
   const char = e.data[e.data.length - 1]
@@ -187,6 +188,7 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
 }
 
 async function handlePairs(textarea, blockUUID, e) {
+  if (e.data.length > 1) return
   const char = e.data[0]
   const i = PairOpenChars.indexOf(char)
   const nextChar = textarea.value[textarea.selectionStart]
@@ -221,6 +223,7 @@ async function handlePairs(textarea, blockUUID, e) {
 }
 
 async function handleSelection(textarea, blockUUID, e) {
+  if (e.data.length > 1) return
   const char = e.data[0]
   let i = WrapIdenChars.indexOf(char)
   if (i > -1) {
@@ -329,14 +332,4 @@ function getUserRules() {
     }
   }
   return ret.filter((rule) => rule[0])
-}
-
-function throttle(fn, ms) {
-  let ts = 0
-  return async (...args) => {
-    const now = Date.now()
-    if (now - ts <= ms) return
-    ts = now
-    await fn(...args)
-  }
 }
