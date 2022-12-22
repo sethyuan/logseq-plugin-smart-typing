@@ -16,7 +16,7 @@ const evaluate = eval
 const WordBoundaryR =
   /[^\u2E80-\u2FFF\u31C0-\u31EF\u3300-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\uFE30-\uFE4FA-Za-z_]/
 
-let textareaBeforeInput
+let beforeInputTextArea = {}
 
 export function init() {
   const appContainer = parent.document.getElementById("app-container")
@@ -94,7 +94,11 @@ async function keydownHandler(e) {
 }
 
 function beforeInputHandler(e) {
-  textareaBeforeInput = {
+  // HACK: Workaround for Windows IME
+  if (e.data.length === 1 && e.data === beforeInputTextArea.data) return
+
+  beforeInputTextArea = {
+    data: e.data,
     value: e.target.value,
     selectionStart: e.target.selectionStart,
     selectionEnd: e.target.selectionEnd,
@@ -112,21 +116,23 @@ async function inputHandler(e) {
     return
 
   const textarea = e.target
+  const before = beforeInputTextArea
   const blockUUID = e.target.closest("[blockid]").getAttribute("blockid")
-  console.log(
-    textareaBeforeInput,
-    e.data,
-    e.target.selectionStart,
-    e.target.selectionEnd,
-    e.target.value,
-  )
 
-  // if (textareaBeforeInput.selectionStart !== textareaBeforeInput.selectionEnd) {
-  //   await handleSelection(textareaBeforeInput, blockUUID, e)
-  // } else {
-  //   ;(await handleSpecialKeys(textarea, blockUUID, e)) ||
-  //     (await handlePairs(textarea, blockUUID, e))
-  // }
+  // reset every beforeinput -> input/compositionend cycle.
+  beforeInputTextArea = {}
+
+  if (
+    before.selectionStart !== before.selectionEnd &&
+    e.data.length === 1 &&
+    before.value.substring(before.selectionStart, before.selectionEnd) !==
+      e.data
+  ) {
+    await handleSelection(before, blockUUID, e)
+  } else {
+    ;(await handleSpecialKeys(textarea, blockUUID, e)) ||
+      (await handlePairs(textarea, blockUUID, e))
+  }
 }
 
 async function handleSpecialKeys(textarea, blockUUID, e) {
