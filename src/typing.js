@@ -139,11 +139,19 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
   const char = e.data[e.data.length - 1]
   const isBoundaryChar = WordBoundaryR.test(char)
   for (let [specialKey, repl] of specialKeys) {
+    const doubleSpaceTrigger = specialKey.endsWith("  ")
     const lastChar = specialKey[specialKey.length - 1]
     const isBoundary = lastChar === " " && isBoundaryChar
     if (
-      (isBoundary || char === lastChar) &&
-      matchSpecialKey(textarea.value, textarea.selectionStart, specialKey)
+      ((char === " " && doubleSpaceTrigger) ||
+        isBoundary ||
+        char === lastChar) &&
+      matchSpecialKey(
+        textarea.value,
+        textarea.selectionStart,
+        specialKey,
+        doubleSpaceTrigger ? 3 : 2,
+      )
     ) {
       const calls = await Promise.all(
         Array.from(
@@ -173,16 +181,21 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
       }
 
       const cursor =
-        barPos < 0 ? 0 : barPos - repl.length + 1 - (isBoundary ? 1 : 0)
+        barPos < 0
+          ? 0
+          : barPos -
+            repl.length +
+            1 -
+            (!doubleSpaceTrigger && isBoundary ? 1 : 0)
       await updateText(
         textarea,
         blockUUID,
         barPos < 0
-          ? `${repl}${isBoundary ? char : ""}`
+          ? `${repl}${!doubleSpaceTrigger && isBoundary ? char : ""}`
           : `${repl.substring(0, barPos)}${repl.substring(barPos + 1)}${
-              isBoundary ? char : ""
+              !doubleSpaceTrigger && isBoundary ? char : ""
             }`,
-        -specialKey.length,
+        -specialKey.length + (doubleSpaceTrigger ? 1 : 0),
         0,
         cursor,
       )
@@ -296,8 +309,8 @@ function updateText(
   })
 }
 
-function matchSpecialKey(text, start, specialKey) {
-  for (let i = specialKey.length - 2, j = -2; i >= 0; i--, j--) {
+function matchSpecialKey(text, start, specialKey, skip) {
+  for (let i = specialKey.length - skip, j = -2; i >= 0; i--, j--) {
     if (text[start + j] !== specialKey[i]) return false
   }
   return true
