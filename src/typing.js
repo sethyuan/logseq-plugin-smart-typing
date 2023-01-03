@@ -94,6 +94,8 @@ async function keydownHandler(e) {
 }
 
 function beforeInputHandler(e) {
+  if (e.data == null) return
+
   // HACK: Workaround for Windows IME
   if (e.data.length === 1 && e.data === beforeInputTextArea.data) return
 
@@ -109,6 +111,7 @@ function beforeInputHandler(e) {
 
 async function inputHandler(e) {
   if (
+    e.data == null ||
     e.target.nodeName !== "TEXTAREA" ||
     !e.target.parentElement.classList.contains("block-editor") ||
     e.isComposing
