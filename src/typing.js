@@ -200,7 +200,7 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
             }`,
         -specialKey.length + (doubleSpaceTrigger ? 1 : 0),
         0,
-        cursor,
+        specialKey !== "：：" ? cursor : null,
       )
 
       return true
@@ -303,10 +303,12 @@ function updateText(
         reject(err)
       }
       textarea.focus()
-      textarea.setSelectionRange(
-        collapsed ? newPos : startPos + numWrapChars,
-        collapsed ? newPos : newPos - numWrapChars,
-      )
+      if (cursorOffset != null) {
+        textarea.setSelectionRange(
+          collapsed ? newPos : startPos + numWrapChars,
+          collapsed ? newPos : newPos - numWrapChars,
+        )
+      }
       resolve()
     }, 0)
   })
