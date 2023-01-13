@@ -211,11 +211,11 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
 
 async function handlePairs(textarea, blockUUID, e) {
   if (e.data.length > 1) return
-  const char = e.data[0]
-  const i = PairOpenChars.indexOf(char)
+  const char = getChar(e.data[0])
+  const i = getOpenPosition(char)
   const nextChar = textarea.value[textarea.selectionStart]
   if (char === nextChar && PairCloseChars.includes(char)) {
-    await updateText(textarea, blockUUID, "", 0, 1)
+    await updateText(textarea, blockUUID, "", -1, 0, 1)
     return true
   } else if (i > -1) {
     const prevChar = textarea.value[textarea.selectionStart - 2]
@@ -237,7 +237,14 @@ async function handlePairs(textarea, blockUUID, e) {
       PairCloseChars.includes(nextChar) ||
       /^\s$/.test(nextChar)
     ) {
-      await updateText(textarea, blockUUID, PairCloseChars[i], 0, 0, -1)
+      await updateText(
+        textarea,
+        blockUUID,
+        `${PairOpenChars[i]}${PairCloseChars[i]}`,
+        -1,
+        0,
+        -1,
+      )
       return true
     }
   }
@@ -356,4 +363,26 @@ function getUserRules() {
     }
   }
   return ret.filter((rule) => rule[0])
+}
+
+function getChar(c) {
+  switch (c) {
+    case "“":
+      return "”"
+    case "‘":
+      return "’"
+    default:
+      return c
+  }
+}
+
+function getOpenPosition(c) {
+  switch (c) {
+    case "”":
+      return PairOpenChars.indexOf("“")
+    case "’":
+      return PairOpenChars.indexOf("‘")
+    default:
+      return PairOpenChars.indexOf(c)
+  }
 }
