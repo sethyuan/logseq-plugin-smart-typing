@@ -228,7 +228,11 @@ async function handlePairs(textarea, blockUUID, e) {
         return true
       }
     }
-    if (char === "〈" && prevChar === "《" && nextChar === "》") {
+    if (
+      (char === "〈" || char === "《") &&
+      prevChar === "《" &&
+      nextChar === "》"
+    ) {
       await updateText(textarea, blockUUID, `<`, -2, 1, 0)
       return true
     }
