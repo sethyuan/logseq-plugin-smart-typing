@@ -15,6 +15,7 @@ const evaluate = eval
 
 const WordBoundaryR =
   /[^\u2E80-\u2FFF\u31C0-\u31EF\u3300-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\uFE30-\uFE4FA-Za-z_]/
+const Punc = /^[!@#$%^&*\-+=_,./?;:！¥…—，。？；：]|\s$/
 
 let beforeInputTextArea = {}
 
@@ -239,7 +240,7 @@ async function handlePairs(textarea, blockUUID, e) {
     if (
       nextChar == null ||
       PairCloseChars.includes(nextChar) ||
-      /^\s$/.test(nextChar)
+      Punc.test(nextChar)
     ) {
       await updateText(
         textarea,
