@@ -29,3 +29,15 @@ window.choose = (...choices) => {
 window.clipboard = async () => {
   return (await parent.navigator.clipboard.readText()) ?? ""
 }
+
+window.callPlugin = (key, ...args) => {
+  // HACK: Wait some time to allow text update to run first.
+  setTimeout(() => logseq.App.invokeExternalPlugin(key, ...args), 50)
+  return ""
+}
+
+window.callCommand = (key, ...args) => {
+  // HACK: Wait some time to allow text update to run first.
+  setTimeout(() => logseq.App.invokeExternalCommand(key, ...args), 50)
+  return ""
+}

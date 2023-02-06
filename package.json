@@ -1,6 +1,6 @@
 {
   "name": "logseq-plugin-smart-typing",
-  "version": "0.5.5",
+  "version": "0.6.0",
   "main": "dist/index.html",
   "logseq": {
     "id": "_sethyuan-logseq-smart-typing",
@@ -11,7 +11,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@logseq/libs": "^0.0.12",
+    "@logseq/libs": "^0.0.14",
     "date-fns": "^2.29.3",
     "logseq-l10n": "^0.2.0"
   },
