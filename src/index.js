@@ -15,7 +15,7 @@ async function main() {
       type: "string",
       default: "",
       description: t(
-        "Trigger characters. Ending in space will trigger on word boundary; ending in double space will trigger on space but will not type space on screen.",
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
       ),
     },
     {
@@ -31,7 +31,7 @@ async function main() {
       type: "string",
       default: "",
       description: t(
-        "Trigger characters. Ending in space will trigger on word boundary; ending in double space will trigger on space but will not type space on screen.",
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
       ),
     },
     {
@@ -47,7 +47,7 @@ async function main() {
       type: "string",
       default: "",
       description: t(
-        "Trigger characters. Ending in space will trigger on word boundary; ending in double space will trigger on space but will not type space on screen.",
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
       ),
     },
     {
@@ -63,7 +63,7 @@ async function main() {
       type: "string",
       default: "",
       description: t(
-        "Trigger characters. Ending in space will trigger on word boundary; ending in double space will trigger on space but will not type space on screen.",
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
       ),
     },
     {
@@ -79,7 +79,7 @@ async function main() {
       type: "string",
       default: "",
       description: t(
-        "Trigger characters. Ending in space will trigger on word boundary; ending in double space will trigger on space but will not type space on screen.",
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
       ),
     },
     {
@@ -95,7 +95,7 @@ async function main() {
       type: "string",
       default: "",
       description: t(
-        "Trigger characters. Ending in space will trigger on word boundary; ending in double space will trigger on space but will not type space on screen.",
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
       ),
     },
     {
@@ -111,7 +111,7 @@ async function main() {
       type: "string",
       default: "",
       description: t(
-        "Trigger characters. Ending in space will trigger on word boundary; ending in double space will trigger on space but will not type space on screen.",
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
       ),
     },
     {
@@ -127,7 +127,7 @@ async function main() {
       type: "string",
       default: "",
       description: t(
-        "Trigger characters. Ending in space will trigger on word boundary; ending in double space will trigger on space but will not type space on screen.",
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
       ),
     },
     {
@@ -143,7 +143,7 @@ async function main() {
       type: "string",
       default: "",
       description: t(
-        "Trigger characters. Ending in space will trigger on word boundary; ending in double space will trigger on space but will not type space on screen.",
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
       ),
     },
     {
@@ -159,7 +159,7 @@ async function main() {
       type: "string",
       default: "",
       description: t(
-        "Trigger characters. Ending in space will trigger on word boundary; ending in double space will trigger on space but will not type space on screen.",
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
       ),
     },
     {

@@ -1,13 +1,26 @@
 import "./fns"
 
+const TRIGGER_IMMEDIATE = 1
+const TRIGGER_WORD = 2
+const TRIGGER_SPACE = 3
+const TRIGGER_REGEX = 4
+
 const PairOpenChars = '([{"（【「『《〈“‘'
 const PairCloseChars = ')]}"）】」』》〉”’'
 const WrapIdenChars = "$\"'([¥￥（【「《·“‘”’"
 const WrapOpenChars = "$\"'([$$（【「《`“‘“‘"
 const WrapCloseChars = "$\"')]$$）】」》`”’”’"
 const BuiltInSpecialKeys = [
-  ["：：", "::"],
-  ["···", "```|```"],
+  {
+    trigger: "：：",
+    type: TRIGGER_IMMEDIATE,
+    repl: "::",
+  },
+  {
+    trigger: "···",
+    type: TRIGGER_IMMEDIATE,
+    repl: "```|```",
+  },
 ]
 let specialKeys = [...BuiltInSpecialKeys]
 
@@ -141,70 +154,105 @@ async function inputHandler(e) {
 
 async function handleSpecialKeys(textarea, blockUUID, e) {
   const char = e.data[e.data.length - 1]
-  const isBoundaryChar = WordBoundaryR.test(char)
-  for (let [specialKey, repl] of specialKeys) {
-    const doubleSpaceTrigger = specialKey.endsWith("  ")
-    const lastChar = specialKey[specialKey.length - 1]
-    const isBoundary = lastChar === " " && isBoundaryChar
-    if (
-      ((char === " " && doubleSpaceTrigger) ||
-        isBoundary ||
-        char === lastChar) &&
-      matchSpecialKey(
-        textarea.value,
-        textarea.selectionStart,
-        specialKey,
-        doubleSpaceTrigger ? 3 : 2,
-      )
-    ) {
-      const calls = await Promise.all(
-        Array.from(
-          repl.matchAll(/\{\{((?:[^\{\}]|\{(?!\{)|\}(?!\}))+)\}\}/g),
-        ).map(async (m) => {
-          return {
-            start: m.index,
-            end: m.index + m[0].length,
-            repl: await evaluate(m[1]),
-          }
-        }),
-      )
-      let barPos = findBarPos(repl, calls)
-      if (calls.length > 0) {
-        let i = 0
-        const segments = []
-        for (const call of calls) {
-          segments.push(repl.substring(i, call.start))
-          segments.push(call.repl)
-          i = call.end
-          if (call.end < barPos) {
-            barPos += call.repl.length - (call.end - call.start)
+  for (const { trigger, type, repl } of specialKeys) {
+    const triggerLastChar = trigger[trigger.length - 1]
+    switch (type) {
+      case TRIGGER_IMMEDIATE: {
+        if (
+          char === triggerLastChar &&
+          matchSpecialKey(textarea.value, textarea.selectionStart, trigger, 1)
+        ) {
+          const [barPos, replacement] = await processReplacement(repl)
+          const cursor = barPos < 0 ? 0 : barPos - replacement.length + 1
+          await updateText(
+            textarea,
+            blockUUID,
+            barPos < 0
+              ? `${replacement}`
+              : `${replacement.substring(0, barPos)}${replacement.substring(
+                  barPos + 1,
+                )}`,
+            -trigger.length,
+            0,
+            trigger !== "：：" ? cursor : null,
+          )
+          return true
+        }
+        break
+      }
+      case TRIGGER_WORD: {
+        if (
+          WordBoundaryR.test(char) &&
+          matchSpecialKey(textarea.value, textarea.selectionStart, trigger)
+        ) {
+          const [barPos, replacement] = await processReplacement(repl)
+          const cursor = barPos < 0 ? 0 : barPos - replacement.length
+          await updateText(
+            textarea,
+            blockUUID,
+            barPos < 0
+              ? `${replacement}${char}`
+              : `${replacement.substring(0, barPos)}${replacement.substring(
+                  barPos + 1,
+                )}${char}`,
+            -(trigger.length + 1),
+            0,
+            cursor,
+          )
+          return true
+        }
+        break
+      }
+      case TRIGGER_SPACE: {
+        if (
+          char === " " &&
+          matchSpecialKey(textarea.value, textarea.selectionStart, trigger)
+        ) {
+          const [barPos, replacement] = await processReplacement(repl)
+          const cursor = barPos < 0 ? 0 : barPos - replacement.length + 1
+          await updateText(
+            textarea,
+            blockUUID,
+            barPos < 0
+              ? `${replacement}`
+              : `${replacement.substring(0, barPos)}${replacement.substring(
+                  barPos + 1,
+                )}`,
+            -(trigger.length + 1),
+            0,
+            cursor,
+          )
+          return true
+        }
+        break
+      }
+      case TRIGGER_REGEX: {
+        const text = textarea.value.substring(0, textarea.selectionStart)
+        if (char === " ") {
+          const match = text.match(trigger)
+          if (match != null) {
+            const regexRepl = text
+              .substring(match.index, match.index + match[0].length)
+              .replace(trigger, repl)
+            const [barPos, replacement] = await processReplacement(regexRepl)
+            const cursor = barPos < 0 ? 0 : barPos - replacement.length + 1
+            await updateText(
+              textarea,
+              blockUUID,
+              barPos < 0
+                ? `${replacement}`
+                : `${replacement.substring(0, barPos)}${replacement.substring(
+                    barPos + 1,
+                  )}`,
+              -(match[0].length + 1),
+              0,
+              cursor,
+            )
+            return true
           }
         }
-        segments.push(repl.substring(i))
-        repl = segments.join("")
+        break
       }
-
-      const cursor =
-        barPos < 0
-          ? 0
-          : barPos -
-            repl.length +
-            1 -
-            (!doubleSpaceTrigger && isBoundary ? 1 : 0)
-      await updateText(
-        textarea,
-        blockUUID,
-        barPos < 0
-          ? `${repl}${!doubleSpaceTrigger && isBoundary ? char : ""}`
-          : `${repl.substring(0, barPos)}${repl.substring(barPos + 1)}${
-              !doubleSpaceTrigger && isBoundary ? char : ""
-            }`,
-        -specialKey.length + (doubleSpaceTrigger ? 1 : 0),
-        0,
-        specialKey !== "：：" ? cursor : null,
-      )
-
-      return true
     }
   }
   return false
@@ -326,9 +374,9 @@ function updateText(
   })
 }
 
-function matchSpecialKey(text, start, specialKey, skip) {
-  for (let i = specialKey.length - skip, j = -2; i >= 0; i--, j--) {
-    if (text[start + j] !== specialKey[i]) return false
+function matchSpecialKey(text, start, trigger, skip = 0) {
+  for (let i = trigger.length - 1 - skip, j = -2; i >= 0; i--, j--) {
+    if (text[start + j] !== trigger[i]) return false
   }
   return true
 }
@@ -359,15 +407,28 @@ function getUserRules() {
     const [, k, n] = match
     const i = +n - 1
     if (ret[i] == null) {
-      ret[i] = new Array(2)
+      ret[i] = {}
     }
     if (k === "trigger") {
-      ret[i][0] = settings[key]
+      const value = settings[key]
+      if (value.endsWith("   ")) {
+        ret[i].trigger = new RegExp(value.substring(0, value.length - 3))
+        ret[i].type = TRIGGER_REGEX
+      } else if (value.endsWith("  ")) {
+        ret[i].trigger = value.substring(0, value.length - 2)
+        ret[i].type = TRIGGER_SPACE
+      } else if (value.endsWith(" ")) {
+        ret[i].trigger = value.substring(0, value.length - 1)
+        ret[i].type = TRIGGER_WORD
+      } else {
+        ret[i].trigger = value
+        ret[i].type = TRIGGER_IMMEDIATE
+      }
     } else if (k === "replacement") {
-      ret[i][1] = settings[key]
+      ret[i].repl = settings[key]
     }
   }
-  return ret.filter((rule) => rule[0])
+  return ret.filter((rule) => rule.trigger)
 }
 
 function getChar(c) {
@@ -390,4 +451,34 @@ function getOpenPosition(c) {
     default:
       return PairOpenChars.indexOf(c)
   }
+}
+
+async function processReplacement(repl) {
+  const calls = await Promise.all(
+    Array.from(repl.matchAll(/\{\{((?:[^\{\}]|\{(?!\{)|\}(?!\}))+)\}\}/g)).map(
+      async (m) => {
+        return {
+          start: m.index,
+          end: m.index + m[0].length,
+          repl: await evaluate(m[1]),
+        }
+      },
+    ),
+  )
+  let barPos = findBarPos(repl, calls)
+  if (calls.length > 0) {
+    let i = 0
+    const segments = []
+    for (const call of calls) {
+      segments.push(repl.substring(i, call.start))
+      segments.push(call.repl)
+      i = call.end
+      if (call.end < barPos) {
+        barPos += call.repl.length - (call.end - call.start)
+      }
+    }
+    segments.push(repl.substring(i))
+    return [barPos, segments.join("")]
+  }
+  return [barPos, repl]
 }
