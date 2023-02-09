@@ -8,6 +8,8 @@
 
 https://user-images.githubusercontent.com/3410293/208813936-e61ddd8a-a809-42b1-add3-aa5159b46ac8.mp4
 
+https://user-images.githubusercontent.com/3410293/217704473-ab818e2a-ac0e-46bc-adb4-7f2ec77206ab.mp4
+
 ## 功能展示
 
 - 更全面的配对标点的自动补完与删除。
