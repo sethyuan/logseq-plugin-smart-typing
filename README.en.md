@@ -8,6 +8,8 @@ Enrich the editing experience in Logseq, automatically match all kinds of parent
 
 https://user-images.githubusercontent.com/3410293/208813936-e61ddd8a-a809-42b1-add3-aa5159b46ac8.mp4
 
+https://user-images.githubusercontent.com/3410293/217704473-ab818e2a-ac0e-46bc-adb4-7f2ec77206ab.mp4
+
 ## Feature Highlights
 
 - More comprehensive auto-completion and deletion of paired punctuation.
