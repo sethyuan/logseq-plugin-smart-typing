@@ -228,28 +228,26 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
       }
       case TRIGGER_REGEX: {
         const text = textarea.value.substring(0, textarea.selectionStart)
-        if (char === " ") {
-          const match = text.match(trigger)
-          if (match != null) {
-            const regexRepl = text
-              .substring(match.index, match.index + match[0].length)
-              .replace(trigger, repl)
-            const [barPos, replacement] = await processReplacement(regexRepl)
-            const cursor = barPos < 0 ? 0 : barPos - replacement.length + 1
-            await updateText(
-              textarea,
-              blockUUID,
-              barPos < 0
-                ? `${replacement}`
-                : `${replacement.substring(0, barPos)}${replacement.substring(
-                    barPos + 1,
-                  )}`,
-              -(match[0].length + 1),
-              0,
-              cursor,
-            )
-            return true
-          }
+        const match = text.match(trigger)
+        if (match != null) {
+          const regexRepl = text
+            .substring(match.index, match.index + match[0].length)
+            .replace(trigger, repl)
+          const [barPos, replacement] = await processReplacement(regexRepl)
+          const cursor = barPos < 0 ? 0 : barPos - replacement.length + 1
+          await updateText(
+            textarea,
+            blockUUID,
+            barPos < 0
+              ? `${replacement}`
+              : `${replacement.substring(0, barPos)}${replacement.substring(
+                  barPos + 1,
+                )}`,
+            -(match[0].length),
+            0,
+            cursor,
+          )
+          return true
         }
         break
       }
