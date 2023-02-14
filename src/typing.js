@@ -57,12 +57,12 @@ export function reloadUserRules() {
 
 export async function reloadUserFns() {
   const fnStrings = (
-    await logseq.DB.datascriptQuery(
+    (await logseq.DB.datascriptQuery(
       `[:find (pull ?b [:block/content])
       :where
       [?t :block/name ".fn"]
       [?b :block/refs ?t]]`,
-    )
+    )) ?? []
   ).map((item) => item[0].content.match(/```.+\n((?:.|\n)+)\n```/)[1])
 
   for (const fnStr of fnStrings) {
