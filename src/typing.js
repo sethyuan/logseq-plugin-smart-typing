@@ -7,7 +7,7 @@ const TRIGGER_REGEX = 4
 
 const PairOpenChars = '([{"（【「『《〈“‘'
 const PairCloseChars = ')]}"）】」』》〉”’'
-const WrapIdenChars = "$\"'([¥￥（【「《·“‘”’"
+const WrapIdenChars = "$\"'([¥￥（【「《·“‘”’『"
 const WrapOpenChars = "$\"'([$$（【「《`“‘“‘"
 const WrapCloseChars = "$\"')]$$）】」》`”’”’"
 const BuiltInSpecialKeys = [
@@ -57,12 +57,12 @@ export function reloadUserRules() {
 
 export async function reloadUserFns() {
   const fnStrings = (
-    await logseq.DB.datascriptQuery(
+    (await logseq.DB.datascriptQuery(
       `[:find (pull ?b [:block/content])
       :where
       [?t :block/name ".fn"]
       [?b :block/refs ?t]]`,
-    )
+    )) ?? []
   ).map((item) => item[0].content.match(/```.+\n((?:.|\n)+)\n```/)[1])
 
   for (const fnStr of fnStrings) {
@@ -284,6 +284,14 @@ async function handlePairs(textarea, blockUUID, e) {
       return true
     }
     if (
+      (char === "『" || char === "「") &&
+      prevChar === "「" &&
+      nextChar === "」"
+    ) {
+      await updateText(textarea, blockUUID, `{{}}`, -2, 1, -2)
+      return true
+    }
+    if (
       nextChar == null ||
       PairCloseChars.includes(nextChar) ||
       Punc.test(nextChar)
@@ -313,7 +321,13 @@ async function handleSelection(textarea, blockUUID, e) {
       textarea.selectionStart,
       textarea.selectionEnd,
     )
-    if (prevChar === char && nextChar === WrapCloseChars[i]) {
+    if (
+      prevChar === "「" &&
+      nextChar === "」" &&
+      (char === "「" || char === "『")
+    ) {
+      await updateText(textarea, blockUUID, `{{${text}}}`, -1, 1, 0, 2)
+    } else if (prevChar === char && nextChar === WrapCloseChars[i]) {
       if (char === "（" || char === "(") {
         await updateText(textarea, blockUUID, `((${text}))`, -1, 1, 0, 2)
       } else if (char === "【" || char === "[") {
@@ -329,7 +343,7 @@ async function handleSelection(textarea, blockUUID, e) {
   }
 }
 
-function updateText(
+async function updateText(
   textarea,
   blockUUID,
   text,
@@ -343,33 +357,25 @@ function updateText(
   const endPos = textarea.selectionEnd + delEndOffset
   const newPos = startPos + text.length + cursorOffset
   const content = textarea.value
-  return new Promise((resolve, reject) => {
-    // HACK: postpone block update to guarantee other input events go first.
-    setTimeout(async () => {
-      try {
-        await logseq.Editor.updateBlock(
-          blockUUID,
-          startPos < content.length
-            ? `${content.substring(0, startPos)}${text}${content.substring(
-                endPos,
-              )}`
-            : startPos === content.length
-            ? `${content}${text}`
-            : `${content} ${text}`,
-        )
-      } catch (err) {
-        reject(err)
-      }
-      textarea.focus()
-      if (cursorOffset != null) {
-        textarea.setSelectionRange(
-          collapsed ? newPos : startPos + numWrapChars,
-          collapsed ? newPos : newPos - numWrapChars,
-        )
-      }
-      resolve()
-    }, 0)
-  })
+  try {
+    await logseq.Editor.updateBlock(
+      blockUUID,
+      startPos < content.length
+        ? `${content.substring(0, startPos)}${text}${content.substring(endPos)}`
+        : startPos === content.length
+        ? `${content}${text}`
+        : `${content} ${text}`,
+    )
+  } catch (err) {
+    reject(err)
+  }
+  textarea.focus()
+  if (cursorOffset != null) {
+    textarea.setSelectionRange(
+      collapsed ? newPos : startPos + numWrapChars,
+      collapsed ? newPos : newPos - numWrapChars,
+    )
+  }
 }
 
 function matchSpecialKey(text, start, trigger, skip = 0) {
