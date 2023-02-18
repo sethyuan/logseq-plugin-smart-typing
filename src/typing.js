@@ -155,11 +155,10 @@ async function inputHandler(e) {
 async function handleSpecialKeys(textarea, blockUUID, e) {
   const char = e.data[e.data.length - 1]
   for (const { trigger, type, repl } of specialKeys) {
-    const triggerLastChar = trigger[trigger.length - 1]
     switch (type) {
       case TRIGGER_IMMEDIATE: {
         if (
-          char === triggerLastChar &&
+          char === trigger[trigger.length - 1] &&
           matchSpecialKey(textarea.value, textarea.selectionStart, trigger, 1)
         ) {
           const [barPos, replacement] = await processReplacement(repl)
@@ -227,14 +226,17 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
         break
       }
       case TRIGGER_REGEX: {
-        const text = textarea.value.substring(0, textarea.selectionStart)
         if (char === " ") {
+          const text = textarea.value.substring(0, textarea.selectionStart - 1)
           const match = text.match(trigger)
           if (match != null) {
+            const matchEnd = match.index + match[0].length
             const regexRepl = text
-              .substring(match.index, match.index + match[0].length)
+              .substring(match.index, matchEnd)
               .replace(trigger, repl)
-            const [barPos, replacement] = await processReplacement(regexRepl)
+            const [barPos, replacement] = await processReplacement(
+              `${regexRepl}${text.substring(matchEnd)}`,
+            )
             const cursor = barPos < 0 ? 0 : barPos - replacement.length + 1
             await updateText(
               textarea,
@@ -244,7 +246,7 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
                 : `${replacement.substring(0, barPos)}${replacement.substring(
                     barPos + 1,
                   )}`,
-              -(match[0].length + 1),
+              -(text.length - match.index + 1),
               0,
               cursor,
             )
@@ -405,7 +407,7 @@ function getUserRules() {
   const settings = logseq.settings
   const ret = []
   for (const key of Object.keys(settings)) {
-    const match = key.match(/(.+)(\d)$/)
+    const match = key.match(/([^0-9]+)(\d+)$/)
     if (!match) {
       ret[key] = settings[key]
       continue
