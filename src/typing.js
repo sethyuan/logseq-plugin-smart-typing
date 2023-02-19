@@ -7,9 +7,9 @@ const TRIGGER_REGEX = 4
 
 const PairOpenChars = '([{"（【「『《〈“‘'
 const PairCloseChars = ')]}"）】」』》〉”’'
-const WrapIdenChars = "$\"'([¥￥（【「《·“‘”’『"
-const WrapOpenChars = "$\"'([$$（【「《`“‘“‘"
-const WrapCloseChars = "$\"')]$$）】」》`”’”’"
+const WrapIdenChars = "$\"'([¥￥（【「《·“‘”’～『"
+const WrapOpenChars = "$\"'([$$（【「《`“‘“‘~"
+const WrapCloseChars = "$\"')]$$）】」》`”’”’~"
 const BuiltInSpecialKeys = [
   {
     trigger: "：：",
@@ -20,6 +20,11 @@ const BuiltInSpecialKeys = [
     trigger: "···",
     type: TRIGGER_IMMEDIATE,
     repl: "```|```",
+  },
+  {
+    trigger: "～～",
+    type: TRIGGER_IMMEDIATE,
+    repl: "~~|~~",
   },
 ]
 let specialKeys = [...BuiltInSpecialKeys]
