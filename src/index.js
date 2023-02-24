@@ -11,6 +11,18 @@ async function main() {
 
   logseq.useSettingsSchema([
     {
+      key: "enableColon",
+      type: "boolean",
+      default: true,
+      description: t("Enable or not Chinese double-colon replacement."),
+    },
+    {
+      key: "enableBrackets",
+      type: "boolean",
+      default: true,
+      description: t("Enable or not Chinese double-bracket replacement."),
+    },
+    {
       key: "trigger1",
       type: "string",
       default: "",

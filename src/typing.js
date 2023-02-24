@@ -56,7 +56,12 @@ export function cleanUp() {
 export function reloadUserRules() {
   const userRules = getUserRules()
   if (userRules.length > 0) {
-    specialKeys = [...BuiltInSpecialKeys, ...userRules]
+    specialKeys = [
+      ...(logseq.settings?.enableColon
+        ? BuiltInSpecialKeys
+        : BuiltInSpecialKeys.filter((rule) => rule.trigger !== "：：")),
+      ...userRules,
+    ]
   }
 }
 
@@ -268,6 +273,7 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
 async function handlePairs(textarea, blockUUID, e) {
   if (e.data.length > 1) return
   const char = getChar(e.data[0])
+  if (!logseq.settings?.enableBrackets && char === "【") return false
   const i = getOpenPosition(char)
   const nextChar = textarea.value[textarea.selectionStart]
   if (char === nextChar && PairCloseChars.includes(char)) {
