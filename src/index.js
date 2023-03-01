@@ -33,6 +33,7 @@ async function main() {
     {
       key: "replacement1",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -49,6 +50,7 @@ async function main() {
     {
       key: "replacement2",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -65,6 +67,7 @@ async function main() {
     {
       key: "replacement3",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -81,6 +84,7 @@ async function main() {
     {
       key: "replacement4",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -97,6 +101,7 @@ async function main() {
     {
       key: "replacement5",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -113,6 +118,7 @@ async function main() {
     {
       key: "replacement6",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -129,6 +135,7 @@ async function main() {
     {
       key: "replacement7",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -145,6 +152,7 @@ async function main() {
     {
       key: "replacement8",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -161,6 +169,7 @@ async function main() {
     {
       key: "replacement9",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -177,6 +186,7 @@ async function main() {
     {
       key: "replacement10",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -193,6 +203,7 @@ async function main() {
     {
       key: "replacement11",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -209,6 +220,7 @@ async function main() {
     {
       key: "replacement12",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -225,6 +237,7 @@ async function main() {
     {
       key: "replacement13",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -241,6 +254,7 @@ async function main() {
     {
       key: "replacement14",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -257,6 +271,7 @@ async function main() {
     {
       key: "replacement15",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -273,6 +288,7 @@ async function main() {
     {
       key: "replacement16",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -289,6 +305,7 @@ async function main() {
     {
       key: "replacement17",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -305,6 +322,7 @@ async function main() {
     {
       key: "replacement18",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -321,6 +339,7 @@ async function main() {
     {
       key: "replacement19",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -337,6 +356,7 @@ async function main() {
     {
       key: "replacement20",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -353,6 +373,7 @@ async function main() {
     {
       key: "replacement21",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -369,6 +390,7 @@ async function main() {
     {
       key: "replacement22",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -385,6 +407,7 @@ async function main() {
     {
       key: "replacement23",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -401,6 +424,7 @@ async function main() {
     {
       key: "replacement24",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -417,6 +441,7 @@ async function main() {
     {
       key: "replacement25",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -433,6 +458,7 @@ async function main() {
     {
       key: "replacement26",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -449,6 +475,7 @@ async function main() {
     {
       key: "replacement27",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -465,6 +492,7 @@ async function main() {
     {
       key: "replacement28",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -481,6 +509,7 @@ async function main() {
     {
       key: "replacement29",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
@@ -497,6 +526,7 @@ async function main() {
     {
       key: "replacement30",
       type: "string",
+      inputAs: "textarea",
       default: "",
       description: t(
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
