@@ -26,6 +26,21 @@ const BuiltInSpecialKeys = [
     type: TRIGGER_IMMEDIATE,
     repl: "~~|~~",
   },
+  {
+    trigger: "〉》",
+    type: TRIGGER_IMMEDIATE,
+    repl: ">",
+  },
+  {
+    trigger: "》〉",
+    type: TRIGGER_IMMEDIATE,
+    repl: ">",
+  },
+  {
+    trigger: "》》",
+    type: TRIGGER_IMMEDIATE,
+    repl: ">",
+  },
 ]
 let specialKeys = [...BuiltInSpecialKeys]
 
@@ -292,8 +307,8 @@ async function handlePairs(textarea, blockUUID, e) {
     }
     if (
       (char === "〈" || char === "《") &&
-      prevChar === "《" &&
-      nextChar === "》"
+      (prevChar === "《" || prevChar === "〈") &&
+      (nextChar === "》" || nextChar === "〉")
     ) {
       await updateText(textarea, blockUUID, `<`, -2, 1, 0)
       return true
