@@ -108,7 +108,6 @@ async function keydownHandler(e) {
     return
 
   const textarea = e.target
-  const blockUUID = textarea.closest("[blockid]").getAttribute("blockid")
 
   // Prevent Logseq's default '(', '（', '[' and '【' behavior.
   if (
@@ -126,6 +125,7 @@ async function keydownHandler(e) {
       const openIndex = PairOpenChars.indexOf(prevChar)
       if (openIndex > -1 && nextChar === PairCloseChars[openIndex]) {
         e.preventDefault()
+        const blockUUID = textarea.closest("[blockid]").getAttribute("blockid")
         await updateText(textarea, blockUUID, "", -1, 1, 0)
       }
     }
@@ -159,7 +159,6 @@ async function inputHandler(e) {
 
   const textarea = e.target
   const before = beforeInputTextArea
-  const blockUUID = e.target.closest("[blockid]").getAttribute("blockid")
 
   // reset every beforeinput -> input/compositionend cycle.
   beforeInputTextArea = {}
@@ -170,14 +169,13 @@ async function inputHandler(e) {
     before.value.substring(before.selectionStart, before.selectionEnd) !==
       e.data
   ) {
-    await handleSelection(before, blockUUID, e)
+    await handleSelection(before, e)
   } else {
-    ;(await handleSpecialKeys(textarea, blockUUID, e)) ||
-      (await handlePairs(textarea, blockUUID, e))
+    ;(await handleSpecialKeys(textarea, e)) || (await handlePairs(textarea, e))
   }
 }
 
-async function handleSpecialKeys(textarea, blockUUID, e) {
+async function handleSpecialKeys(textarea, e) {
   const char = e.data[e.data.length - 1]
   for (const { trigger, type, repl } of specialKeys) {
     switch (type) {
@@ -188,6 +186,7 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
         ) {
           const [barPos, replacement] = await processReplacement(repl)
           const cursor = barPos < 0 ? 0 : barPos - replacement.length + 1
+          const blockUUID = getBlockUUID(e.target)
           await updateText(
             textarea,
             blockUUID,
@@ -211,6 +210,7 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
         ) {
           const [barPos, replacement] = await processReplacement(repl)
           const cursor = barPos < 0 ? 0 : barPos - replacement.length
+          const blockUUID = getBlockUUID(e.target)
           await updateText(
             textarea,
             blockUUID,
@@ -234,6 +234,7 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
         ) {
           const [barPos, replacement] = await processReplacement(repl)
           const cursor = barPos < 0 ? 0 : barPos - replacement.length + 1
+          const blockUUID = getBlockUUID(e.target)
           await updateText(
             textarea,
             blockUUID,
@@ -263,6 +264,7 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
               `${regexRepl}${text.substring(matchEnd)}`,
             )
             const cursor = barPos < 0 ? 0 : barPos - replacement.length + 1
+            const blockUUID = getBlockUUID(e.target)
             await updateText(
               textarea,
               blockUUID,
@@ -285,22 +287,25 @@ async function handleSpecialKeys(textarea, blockUUID, e) {
   return false
 }
 
-async function handlePairs(textarea, blockUUID, e) {
+async function handlePairs(textarea, e) {
   if (e.data.length > 1) return
   const char = getChar(e.data[0])
   if (!logseq.settings?.enableBrackets && char === "【") return false
   const i = getOpenPosition(char)
   const nextChar = textarea.value[textarea.selectionStart]
   if (char === nextChar && PairCloseChars.includes(char)) {
+    const blockUUID = getBlockUUID(e.target)
     await updateText(textarea, blockUUID, "", -1, 0, 1)
     return true
   } else if (i > -1) {
     const prevChar = textarea.value[textarea.selectionStart - 2]
     if (prevChar === char && nextChar === PairCloseChars[i]) {
       if (char === "（" || char === "(") {
+        const blockUUID = getBlockUUID(e.target)
         await updateText(textarea, blockUUID, `((`, -2, 1, 0)
         return true
       } else if (char === "【" || char === "[") {
+        const blockUUID = getBlockUUID(e.target)
         await updateText(textarea, blockUUID, `[[`, -2, 1, 0)
         return true
       }
@@ -310,6 +315,7 @@ async function handlePairs(textarea, blockUUID, e) {
       (prevChar === "《" || prevChar === "〈") &&
       (nextChar === "》" || nextChar === "〉")
     ) {
+      const blockUUID = getBlockUUID(e.target)
       await updateText(textarea, blockUUID, `<`, -2, 1, 0)
       return true
     }
@@ -318,6 +324,7 @@ async function handlePairs(textarea, blockUUID, e) {
       prevChar === "「" &&
       nextChar === "」"
     ) {
+      const blockUUID = getBlockUUID(e.target)
       await updateText(textarea, blockUUID, `{{}}`, -2, 1, -2)
       return true
     }
@@ -326,6 +333,7 @@ async function handlePairs(textarea, blockUUID, e) {
       PairCloseChars.includes(nextChar) ||
       Punc.test(nextChar)
     ) {
+      const blockUUID = getBlockUUID(e.target)
       await updateText(
         textarea,
         blockUUID,
@@ -340,30 +348,46 @@ async function handlePairs(textarea, blockUUID, e) {
   return false
 }
 
-async function handleSelection(textarea, blockUUID, e) {
+async function handleSelection(textarea, e) {
   if (e.data.length > 1) return
   const char = e.data[0]
   let i = WrapIdenChars.indexOf(char)
   if (i > -1) {
     const prevChar = textarea.value[textarea.selectionStart - 1]
     const nextChar = textarea.value[textarea.selectionEnd]
-    const text = textarea.value.substring(
-      textarea.selectionStart,
-      textarea.selectionEnd,
-    )
     if (
       prevChar === "「" &&
       nextChar === "」" &&
       (char === "「" || char === "『")
     ) {
+      const blockUUID = getBlockUUID(e.target)
+      const text = textarea.value.substring(
+        textarea.selectionStart,
+        textarea.selectionEnd,
+      )
       await updateText(textarea, blockUUID, `{{${text}}}`, -1, 1, 0, 2)
     } else if (prevChar === char && nextChar === WrapCloseChars[i]) {
       if (char === "（" || char === "(") {
+        const blockUUID = getBlockUUID(e.target)
+        const text = textarea.value.substring(
+          textarea.selectionStart,
+          textarea.selectionEnd,
+        )
         await updateText(textarea, blockUUID, `((${text}))`, -1, 1, 0, 2)
       } else if (char === "【" || char === "[") {
+        const blockUUID = getBlockUUID(e.target)
+        const text = textarea.value.substring(
+          textarea.selectionStart,
+          textarea.selectionEnd,
+        )
         await updateText(textarea, blockUUID, `[[${text}]]`, -1, 1, 0, 2)
       }
     } else {
+      const blockUUID = getBlockUUID(e.target)
+      const text = textarea.value.substring(
+        textarea.selectionStart,
+        textarea.selectionEnd,
+      )
       await updateText(
         textarea,
         blockUUID,
@@ -371,6 +395,10 @@ async function handleSelection(textarea, blockUUID, e) {
       )
     }
   }
+}
+
+function getBlockUUID(el) {
+  return el.id.replace(/^edit-block-[0-9]+-/, "")
 }
 
 async function updateText(
