@@ -1,6 +1,6 @@
 {
   "name": "logseq-plugin-smart-typing",
-  "version": "0.10.5",
+  "version": "0.10.6",
   "main": "dist/index.html",
   "logseq": {
     "id": "_sethyuan-logseq-smart-typing",

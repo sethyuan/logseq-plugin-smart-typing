@@ -532,6 +532,346 @@ async function main() {
         "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
       ),
     },
+    {
+      key: "trigger31",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement31",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger32",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement32",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger33",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement33",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger34",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement34",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger35",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement35",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger36",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement36",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger37",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement37",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger38",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement38",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger39",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement39",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger40",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement40",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger41",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement41",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger42",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement42",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger43",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement43",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger44",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement44",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger45",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement45",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger46",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement46",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger47",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement47",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger48",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement48",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger49",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement49",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
+    {
+      key: "trigger50",
+      type: "string",
+      default: "",
+      description: t(
+        "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+      ),
+    },
+    {
+      key: "replacement50",
+      type: "string",
+      inputAs: "textarea",
+      default: "",
+      description: t(
+        "Replacement. JS expressions are in double curly brackets like `{{time()}}`. `|` means cursor position.",
+      ),
+    },
   ])
 
   const settingsOff = logseq.onSettingsChanged(reloadUserRules)
