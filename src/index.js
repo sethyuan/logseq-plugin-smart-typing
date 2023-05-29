@@ -19,7 +19,7 @@ async function main() {
     {
       key: "enableBrackets",
       type: "boolean",
-      default: true,
+      default: false,
       description: t("Enable or not Chinese double-bracket replacement."),
     },
     {
