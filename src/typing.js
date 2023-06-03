@@ -171,6 +171,7 @@ async function inputHandler(e) {
   if (
     before.selectionStart !== before.selectionEnd &&
     e.data.length === 1 &&
+    WrapIdenChars.includes(e.data) &&
     before.value.substring(before.selectionStart, before.selectionEnd) !==
       e.data
   ) {
