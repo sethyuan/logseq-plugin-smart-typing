@@ -479,13 +479,17 @@ function getUserRules() {
     }
     if (k === "trigger") {
       const value = settings[key]
-      if (value.endsWith("   ")) {
-        ret[i].trigger = new RegExp(value.substring(0, value.length - 3))
+      if (value.length > 3 && value.endsWith("   ")) {
+        let str = value.substring(0, value.length - 3)
+        if (str[str.length - 1] !== "$" || str[str.length - 2] === "\\") {
+          str = `${str}$`
+        }
+        ret[i].trigger = new RegExp(str)
         ret[i].type = TRIGGER_REGEX
-      } else if (value.endsWith("  ")) {
+      } else if (value.length > 2 && value.endsWith("  ")) {
         ret[i].trigger = value.substring(0, value.length - 2)
         ret[i].type = TRIGGER_SPACE
-      } else if (value.endsWith(" ")) {
+      } else if (value.length > 1 && value.endsWith(" ")) {
         ret[i].trigger = value.substring(0, value.length - 1)
         ret[i].type = TRIGGER_WORD
       } else {
