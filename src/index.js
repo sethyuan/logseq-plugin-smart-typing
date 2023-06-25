@@ -17,12 +17,6 @@ async function main() {
       description: t("Enable or not Chinese double-colon replacement."),
     },
     {
-      key: "enableBrackets",
-      type: "boolean",
-      default: false,
-      description: t("Enable or not Chinese double-bracket replacement."),
-    },
-    {
       key: "trigger1",
       type: "string",
       default: "",

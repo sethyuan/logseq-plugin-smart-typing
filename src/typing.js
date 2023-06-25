@@ -5,8 +5,8 @@ const TRIGGER_WORD = 2
 const TRIGGER_SPACE = 3
 const TRIGGER_REGEX = 4
 
-const PairOpenChars = '([{"（【「『《〈“‘'
-const PairCloseChars = ')]}"）】」』》〉”’'
+const PairOpenChars = '{"（「『《〈“‘'
+const PairCloseChars = '}"）」』》〉”’'
 const WrapIdenChars = "$\"'([¥￥（【「《·“‘”’～『"
 const WrapOpenChars = "$\"'([$$（【「《`“‘“‘~"
 const WrapCloseChars = "$\"')]$$）】」》`”’”’~"
@@ -109,10 +109,11 @@ async function keydownHandler(e) {
 
   const textarea = e.target
 
-  // Prevent Logseq's default '(', '（', '[' and '【' behavior.
+  // Prevent Logseq's default '(', '（', '[' and '【' behavior for selections.
   if (
-    (e.shiftKey && e.code === "Digit9") ||
-    (!e.shiftKey && e.code === "BracketLeft")
+    ((e.shiftKey && e.code === "Digit9") ||
+      (!e.shiftKey && e.code === "BracketLeft")) &&
+    textarea.selectionStart !== textarea.selectionEnd
   ) {
     e.stopPropagation()
   }
@@ -294,9 +295,8 @@ async function handleSpecialKeys(textarea, e) {
 }
 
 async function handlePairs(textarea, e) {
-  if (e.data.length > 1) return
+  if (e.data.length > 1) return false
   const char = getChar(e.data[0])
-  if (!logseq.settings?.enableBrackets && char === "【") return false
   const i = getOpenPosition(char)
   const nextChar = textarea.value[textarea.selectionStart]
   if (char === nextChar && PairCloseChars.includes(char)) {
@@ -305,16 +305,10 @@ async function handlePairs(textarea, e) {
     return true
   } else if (i > -1) {
     const prevChar = textarea.value[textarea.selectionStart - 2]
-    if (prevChar === char && nextChar === PairCloseChars[i]) {
-      if (char === "（" || char === "(") {
-        const blockUUID = getBlockUUID(e.target)
-        await updateText(textarea, blockUUID, `((`, -2, 1, 0)
-        return true
-      } else if (char === "【" || char === "[") {
-        const blockUUID = getBlockUUID(e.target)
-        await updateText(textarea, blockUUID, `[[`, -2, 1, 0)
-        return true
-      }
+    if (char === "（" && prevChar === char && nextChar === PairCloseChars[i]) {
+      const blockUUID = getBlockUUID(e.target)
+      await updateText(textarea, blockUUID, `((`, -2, 1, 0)
+      return true
     }
     if (
       (char === "〈" || char === "《") &&
