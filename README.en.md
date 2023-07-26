@@ -26,6 +26,8 @@ https://user-images.githubusercontent.com/3410293/217704473-ab818e2a-ac0e-46bc-a
 
 `date(dayOffset)` - Returns date, an optional `dayOffset` can be given, -1 means yesterday, 1 means tomorrow, etc. The default is 0 which is today.
 
+`dateFormat(date, formatStr)` - Returns the formatted date，`date` is a JS Date object，`formatStr` is the format string。
+
 `random(from, to)` - Returns a random number between `from` and `to`, inclusive.
 
 `choose(...choices)` - Given a set of values, returns one randomly.

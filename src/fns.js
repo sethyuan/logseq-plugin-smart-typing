@@ -3,7 +3,7 @@ import { addDays, format } from "date-fns"
 window.time = (is24Hours = true) => {
   const now = new Date()
   if (is24Hours) {
-    return format(now, "HH:mm", now)
+    return format(now, "HH:mm")
   } else {
     return format(now, "h:m aa")
   }
@@ -12,7 +12,11 @@ window.time = (is24Hours = true) => {
 window.date = async (dayOffset = 0) => {
   const { preferredDateFormat } = await logseq.App.getUserConfigs()
   const now = addDays(new Date(), dayOffset)
-  return format(now, preferredDateFormat, now)
+  return format(now, preferredDateFormat)
+}
+
+window.dateFormat = (date, formatStr) => {
+  return format(date, formatStr)
 }
 
 window.random = (from, to) => {

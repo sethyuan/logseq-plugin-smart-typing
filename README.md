@@ -26,6 +26,8 @@ https://user-images.githubusercontent.com/3410293/217704473-ab818e2a-ac0e-46bc-a
 
 `date(dayOffset)` - 返回日期，可选给定`dayOffset`，不给为今天，-1 为昨天，1 为明天，依此类推。
 
+`dateFormat(date, formatStr)` - 返回格式化的日期，`date`是一个 JS Date 对象，`formatStr`是格式化字符串。
+
 `random(from, to)` - 返回介于 `from` 与 `to` 之间的一个随机数，包含 from 和 to。
 
 `choose(...choices)` - 给定一组值，随机返回其中一个。
