@@ -1,4 +1,4 @@
-import { addDays, format } from "date-fns"
+import { addDays, format, parse } from "date-fns"
 
 window.time = (is24Hours = true) => {
   const now = new Date()
@@ -18,6 +18,8 @@ window.date = async (dayOffset = 0) => {
 window.dateFormat = (date, formatStr) => {
   return format(date, formatStr)
 }
+
+window.dateParse = parse
 
 window.random = (from, to) => {
   if (from > to) return from
