@@ -1,25 +1,27 @@
-import { addDays, format, parse } from "date-fns"
+import * as dateFns from "date-fns"
 
 window.time = (is24Hours = true) => {
   const now = new Date()
   if (is24Hours) {
-    return format(now, "HH:mm")
+    return dateFns.format(now, "HH:mm")
   } else {
-    return format(now, "h:m aa")
+    return dateFns.format(now, "h:m aa")
   }
 }
 
 window.date = async (dayOffset = 0) => {
   const { preferredDateFormat } = await logseq.App.getUserConfigs()
-  const now = addDays(new Date(), dayOffset)
-  return format(now, preferredDateFormat)
+  const now = dateFns.addDays(new Date(), dayOffset)
+  return dateFns.format(now, preferredDateFormat)
 }
 
 window.dateFormat = (date, formatStr) => {
-  return format(date, formatStr)
+  return dateFns.format(date, formatStr)
 }
 
-window.dateParse = parse
+window.dateParse = dateFns.parse
+
+window.dateFns = dateFns
 
 window.random = (from, to) => {
   if (from > to) return from

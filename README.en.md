@@ -26,7 +26,7 @@ https://user-images.githubusercontent.com/3410293/217704473-ab818e2a-ac0e-46bc-a
 
 `date(dayOffset)` - Returns date, an optional `dayOffset` can be given, -1 means yesterday, 1 means tomorrow, etc. The default is 0 which is today.
 
-`dateFormat(date, formatStr)` - Returns the formatted date，`date` is a JS Date object，`formatStr` is the format string。
+`dateFns` - `date-fns` library, it includes all its functions, refer to its document [here](https://date-fns.org/v2.29.3/docs/Getting-Started).
 
 `random(from, to)` - Returns a random number between `from` and `to`, inclusive.
 
