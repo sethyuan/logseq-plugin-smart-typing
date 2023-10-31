@@ -17,7 +17,7 @@ https://user-images.githubusercontent.com/3410293/217704473-ab818e2a-ac0e-46bc-a
 - One-click wrapping of selected text with punctuation pairs.
 - Auto replacement of text.
 - User defined replacement rules. Supports JS expressions, placing cursor and providing some built-in functions.
-- Regex trigger and replacement support for user defined rules.
+- Regex trigger and replacement support for user defined rules (triggered on space).
 - User can define custom functions. Create a code block and give it a `#.fn` tag. The code within the code block will be read by the plugin on startup. You can also run "Reload user functions" from within the command palette (`mod+shift+p`) later to reload if you modified the code.
 
 ## Built-In Functions

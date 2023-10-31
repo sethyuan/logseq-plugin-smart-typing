@@ -9,7 +9,7 @@ export function generateTriggerSchema() {
         type: "string",
         default: "",
         description: t(
-          "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex.",
+          "Trigger characters. Ending in space will trigger on word boundary; ending in double spaces will trigger on space but will not type space on screen; ending in triple spaces to enable regex, triggered on space.",
         ),
       },
       {
