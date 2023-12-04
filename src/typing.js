@@ -14,7 +14,7 @@ const BuiltInSpecialKeys = [
   {
     trigger: "：：",
     type: TRIGGER_IMMEDIATE,
-    repl: "::",
+    repl: ":: ",
   },
   {
     trigger: "···",
@@ -40,6 +40,11 @@ const BuiltInSpecialKeys = [
     trigger: "》》",
     type: TRIGGER_IMMEDIATE,
     repl: ">",
+  },
+  {
+    trigger: "【",
+    type: TRIGGER_SPACE,
+    repl: "[|]",
   },
 ]
 let specialKeys = [...BuiltInSpecialKeys]
@@ -299,12 +304,16 @@ async function handlePairs(textarea, e) {
   const char = getChar(e.data[0])
   const i = getOpenPosition(char)
   const nextChar = textarea.value[textarea.selectionStart]
-  if (char === nextChar && PairCloseChars.includes(char)) {
+  const prevChar = textarea.value[textarea.selectionStart - 2]
+  if (char === " " && prevChar === "（" && nextChar === "）") {
+    const blockUUID = getBlockUUID(e.target)
+    await updateText(textarea, blockUUID, "()", -2, 1, -1)
+    return true
+  } else if (char === nextChar && PairCloseChars.includes(char)) {
     const blockUUID = getBlockUUID(e.target)
     await updateText(textarea, blockUUID, "", -1, 0, 1)
     return true
   } else if (i > -1) {
-    const prevChar = textarea.value[textarea.selectionStart - 2]
     if (char === "（" && prevChar === char && nextChar === PairCloseChars[i]) {
       const blockUUID = getBlockUUID(e.target)
       await updateText(textarea, blockUUID, `((`, -2, 1, 0)
