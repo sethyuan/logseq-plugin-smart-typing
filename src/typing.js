@@ -14,7 +14,7 @@ const BuiltInSpecialKeys = [
   {
     trigger: "：：",
     type: TRIGGER_IMMEDIATE,
-    repl: ":: ",
+    repl: "::",
   },
   {
     trigger: "···",
