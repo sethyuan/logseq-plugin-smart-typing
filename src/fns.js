@@ -5,7 +5,7 @@ window.time = (is24Hours = true) => {
   if (is24Hours) {
     return dateFns.format(now, "HH:mm")
   } else {
-    return dateFns.format(now, "hh:hm aa")
+    return dateFns.format(now, "hh:mm aa")
   }
 }
 
