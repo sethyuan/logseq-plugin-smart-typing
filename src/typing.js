@@ -7,8 +7,8 @@ const TRIGGER_REGEX = 4
 
 const PairOpenChars = '{"（「『《〈“‘«'
 const PairCloseChars = '}"）」』》〉”’»'
-const WrapIdenChars = "$\"'([¥￥（【「《·“‘”’～『"
-const WrapOpenChars =  "$\"'([$$（【「《`“‘“‘~«"
+const WrapIdenChars = "$\"'([¥￥（【「《·“‘”’～«『"
+const WrapOpenChars = "$\"'([$$（【「《`“‘“‘~«"
 const WrapCloseChars = "$\"')]$$）】」》`”’”’~»"
 const BuiltInSpecialKeys = [
   {
