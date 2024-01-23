@@ -5,11 +5,11 @@ const TRIGGER_WORD = 2
 const TRIGGER_SPACE = 3
 const TRIGGER_REGEX = 4
 
-const PairOpenChars = '{"（「『《〈“‘'
-const PairCloseChars = '}"）」』》〉”’'
+const PairOpenChars = '{"（「『《〈“‘«'
+const PairCloseChars = '}"）」』》〉”’»'
 const WrapIdenChars = "$\"'([¥￥（【「《·“‘”’～『"
-const WrapOpenChars = "$\"'([$$（【「《`“‘“‘~"
-const WrapCloseChars = "$\"')]$$）】」》`”’”’~"
+const WrapOpenChars =  "$\"'([$$（【「《`“‘“‘~«"
+const WrapCloseChars = "$\"')]$$）】」》`”’”’~»"
 const BuiltInSpecialKeys = [
   {
     trigger: "：：",
